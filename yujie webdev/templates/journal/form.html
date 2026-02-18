@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .journal-form-page-bg {
+        background: #f5f6f8;
+        min-height: 100vh;
+    }
+    .journal-form-page {
+        color: #1a222d;
+        font-family: 'Roboto', sans-serif;
+    }
+    .journal-form-page h1, .journal-form-page h2, .journal-form-page h3 {
+        font-family: 'Oswald', sans-serif;
+        color: #1a222d;
+    }
+    .form-control, .form-select {
+        background-color: #ffffff !important;
+        color: #1a222d !important;
+        border: 1px solid #ced4da;
+        font-family: 'Roboto', sans-serif;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: #ffffff !important;
+        color: #1a222d !important;
+        border-color: #1a222d;
+        box-shadow: 0 0 0 0.2rem rgba(26, 34, 45, 0.25);
+    }
+    .form-control::placeholder {
+        color: #6c757d !important;
+    }
+    .journal-form-card {
+        background-color: #ffffff !important;
+    }
+    .journal-form-page .form-label {
+        color: #1a222d !important;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+    }
+    .journal-tag-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #1a222d;
+        background: #fff;
+    }
+    .journal-tag-btn:hover { background: #f8f9fa; }
+    .journal-tag-check:checked + .journal-tag-btn {
+        background: #1a222d;
+        color: #fff;
+        border-color: #1a222d;
+    }
+    .journal-tag-check:checked + .journal-tag-btn .journal-tag-tick { display: inline !important; }
+</style>
+<div class="journal-form-page-bg">
+    <div class="container-fluid py-4 py-lg-5 journal-form-page">
+        <div class="container-xxl">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-lg journal-form-card">
+                        <div class="card-body p-5">
+                            
+                            <h2 class="mb-4 fw-bold" style="color: #1a222d !important; font-family: 'Oswald', sans-serif;">
+                                <i class="fa-solid fa-pen-fancy me-2"></i> {{ 'Edit' if entry else 'Share Your' }} Story
+                            </h2>
+
+                            {% include '_profile_info_posting.html' %}
+
+                            <form method="POST">
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Story Title</label>
+                                    <input type="text" name="title" class="form-control form-control-lg" placeholder="e.g. My Childhood Games" value="{{ entry.title if entry }}" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Your Story</label>
+                                    <textarea name="content" class="form-control" rows="6" placeholder="Write your thoughts here..." required>{{ entry.content if entry }}</textarea>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold d-block mb-2" style="color: #1a222d !important;">Mood</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="mood" id="mood1" value="Happy" {{ 'checked' if entry and entry.mood=='Happy' }}>
+                            <label class="btn btn-outline-success" for="mood1"><i class="fa-solid fa-face-smile me-1"></i> Happy</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood2" value="Neutral" {{ 'checked' if entry and entry.mood=='Neutral' }}>
+                            <label class="btn btn-outline-secondary" for="mood2"><i class="fa-solid fa-face-meh me-1"></i> Neutral</label>
+
+                            <input type="radio" class="btn-check" name="mood" id="mood3" value="Sad" {{ 'checked' if entry and entry.mood=='Sad' }}>
+                            <label class="btn btn-outline-danger" for="mood3"><i class="fa-solid fa-face-frown me-1"></i> Sad</label>
+                        </div>
+                    </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Tags</label>
+                                    <p class="text-muted small mb-2">Click to select</p>
+                                    <div class="d-flex gap-2 flex-wrap journal-tag-options">
+                                        <input type="checkbox" name="tags" value="Childhood" id="tag1" class="journal-tag-check d-none" {{ 'checked' if entry and 'Childhood' in (entry.tags.split(',') if entry.tags else []) }}>
+                                        <label class="journal-tag-btn rounded-pill px-3 py-2 border" for="tag1"><i class="bi bi-check-lg journal-tag-tick me-1 d-none"></i>Childhood</label>
+
+                                        <input type="checkbox" name="tags" value="Technology" id="tag2" class="journal-tag-check d-none" {{ 'checked' if entry and 'Technology' in (entry.tags.split(',') if entry.tags else []) }}>
+                                        <label class="journal-tag-btn rounded-pill px-3 py-2 border" for="tag2"><i class="bi bi-check-lg journal-tag-tick me-1 d-none"></i>Technology</label>
+
+                                        <input type="checkbox" name="tags" value="Family" id="tag3" class="journal-tag-check d-none" {{ 'checked' if entry and 'Family' in (entry.tags.split(',') if entry.tags else []) }}>
+                                        <label class="journal-tag-btn rounded-pill px-3 py-2 border" for="tag3"><i class="bi bi-check-lg journal-tag-tick me-1 d-none"></i>Family</label>
+
+                                        <input type="checkbox" name="tags" value="Traditions" id="tag4" class="journal-tag-check d-none" {{ 'checked' if entry and 'Traditions' in (entry.tags.split(',') if entry.tags else []) }}>
+                                        <label class="journal-tag-btn rounded-pill px-3 py-2 border" for="tag4"><i class="bi bi-check-lg journal-tag-tick me-1 d-none"></i>Traditions</label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark btn-lg w-100 mt-3 py-3 shadow">
+                                    {{ 'Update Story' if entry else 'Publish Story' }}
+                                </button>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

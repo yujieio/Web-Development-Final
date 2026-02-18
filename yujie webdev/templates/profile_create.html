@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 text-dark">CREATE YOUR PROFILE</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Set up your Bridge Profile to start connecting</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <form method="POST" action="{{ url_for('profile_create') }}" class="profile-edit-form">
+                        
+                        <!-- Key Profile Info -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-person-circle fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">ABOUT YOU</h3>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark">Full Name *</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark">User Type *</label>
+                                        <select class="form-select" name="user_type" required>
+                                            <option value="Youth" selected>Youth</option>
+                                            <option value="Senior">Senior</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-semibold text-dark">Languages</label>
+                                        <input type="text" class="form-control" name="languages" 
+                                               placeholder="e.g., English, Mandarin, Malay (comma-separated)">
+                                        <small class="text-muted">Separate multiple languages with commas</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold text-dark">Short Introduction</label>
+                                        <textarea class="form-control" name="short_intro" rows="4" 
+                                                  placeholder="Tell others about yourself..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferred Interaction Style -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-people-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">HOW YOU CONNECT</h3>
+                                </div>
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark mb-3">Interaction Type</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="interaction_type" id="createOneToOne" value="1-to-1" checked>
+                                            <label class="btn btn-outline-dark" for="createOneToOne">
+                                                <i class="bi bi-person-fill me-2"></i>1-to-1
+                                            </label>
+                                            <input type="radio" class="btn-check" name="interaction_type" id="createGroup" value="Group">
+                                            <label class="btn btn-outline-dark" for="createGroup">
+                                                <i class="bi bi-people-fill me-2"></i>Group
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark mb-3">Meeting Style</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="meeting_style" id="createOnline" value="Online" checked>
+                                            <label class="btn btn-outline-dark" for="createOnline">
+                                                <i class="bi bi-laptop me-2"></i>Online
+                                            </label>
+                                            <input type="radio" class="btn-check" name="meeting_style" id="createInPerson" value="In-Person">
+                                            <label class="btn btn-outline-dark" for="createInPerson">
+                                                <i class="bi bi-geo-alt-fill me-2"></i>In-Person
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interest Tags -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-tags-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">COMMON GROUND</h3>
+                                </div>
+                                
+                                <label class="form-label fw-semibold text-dark mb-3">Interest Tags</label>
+                                <input type="text" class="form-control mb-3" name="interest_tags" 
+                                       placeholder="e.g., Cooking, Walking, Movies, Games, Music, Reading (comma-separated)">
+                                <small class="text-muted">Separate multiple interests with commas. These help others find common ground with you.</small>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('profile') }}" class="btn btn-outline-dark rounded-pill px-4">
+                                <i class="bi bi-arrow-left me-2"></i>CANCEL
+                            </a>
+                            <button type="submit" class="btn btn-dark rounded-pill px-5">
+                                <i class="bi bi-check-circle me-2"></i>CREATE PROFILE
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

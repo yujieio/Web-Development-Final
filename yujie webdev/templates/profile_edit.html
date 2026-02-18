@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 text-dark">EDIT PROFILE</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Update your information to help others connect with you</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <form method="POST" action="{{ url_for('profile_edit') }}" class="profile-edit-form" enctype="multipart/form-data">
+                        
+                        <!-- Profile Picture -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-image fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">PROFILE PICTURE</h3>
+                                </div>
+                                <div class="d-flex align-items-center gap-4">
+                                    <div class="flex-shrink-0">
+                                        <img id="profilePreview" src="{{ (profile.profile_picture_url if profile and profile.profile_picture_url else url_for('static', filename='images/default-avatar.svg')) }}{{ '?v=' ~ profile.date_updated.timestamp()|int if profile and profile.profile_picture_url and profile.date_updated else '' }}" 
+                                             alt="Profile" class="rounded-circle border" style="width: 100px; height: 100px; object-fit: cover;">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-semibold text-dark">Upload a new photo</label>
+                                        <input type="file" class="form-control" name="profile_picture" id="profilePictureInput"
+                                               accept=".jpg,.jpeg,.png,.gif,.webp">
+                                        <small class="text-muted">JPG, PNG, GIF or WebP. Max 5MB.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Profile Info -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-person-circle fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">ABOUT YOU</h3>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark">Full Name *</label>
+                                        <input type="text" class="form-control" name="name" value="{{ profile.name if profile else '' }}" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark">User Type *</label>
+                                        <select class="form-select" name="user_type" required>
+                                            <option value="Youth" {% if profile and profile.user_type == 'Youth' %}selected{% endif %}>Youth</option>
+                                            <option value="Senior" {% if profile and profile.user_type == 'Senior' %}selected{% endif %}>Senior</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-semibold text-dark">Languages</label>
+                                        <input type="text" class="form-control" name="languages" 
+                                               value="{{ profile.languages if profile and profile.languages else '' }}"
+                                               placeholder="e.g., English, Mandarin, Malay (comma-separated)">
+                                        <small class="text-muted">Separate multiple languages with commas</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold text-dark">Short Introduction</label>
+                                        <textarea class="form-control" name="short_intro" rows="4" 
+                                                  placeholder="Tell others about yourself...">{{ profile.short_intro if profile and profile.short_intro else '' }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferred Interaction Style -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-people-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">HOW YOU CONNECT</h3>
+                                </div>
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark mb-3">Interaction Type</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="interaction_type" id="editOneToOne" value="1-to-1"
+                                                   {% if profile and profile.interaction_type == '1-to-1' %}checked{% elif not profile %}checked{% endif %}>
+                                            <label class="btn btn-outline-dark" for="editOneToOne">
+                                                <i class="bi bi-person-fill me-2"></i>1-to-1
+                                            </label>
+                                            <input type="radio" class="btn-check" name="interaction_type" id="editGroup" value="Group"
+                                                   {% if profile and profile.interaction_type == 'Group' %}checked{% endif %}>
+                                            <label class="btn btn-outline-dark" for="editGroup">
+                                                <i class="bi bi-people-fill me-2"></i>Group
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold text-dark mb-3">Meeting Style</label>
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="meeting_style" id="editOnline" value="Online"
+                                                   {% if profile and profile.meeting_style == 'Online' %}checked{% elif not profile %}checked{% endif %}>
+                                            <label class="btn btn-outline-dark" for="editOnline">
+                                                <i class="bi bi-laptop me-2"></i>Online
+                                            </label>
+                                            <input type="radio" class="btn-check" name="meeting_style" id="editInPerson" value="In-Person"
+                                                   {% if profile and profile.meeting_style == 'In-Person' %}checked{% endif %}>
+                                            <label class="btn btn-outline-dark" for="editInPerson">
+                                                <i class="bi bi-geo-alt-fill me-2"></i>In-Person
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accessibility Options -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-accessibility fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">MAKE IT COMFORTABLE</h3>
+                                </div>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="large_text" id="editLargeText" 
+                                                       style="width: 3rem; height: 1.5rem;"
+                                                       {% if profile and profile.large_text %}checked{% endif %}>
+                                                <label class="form-check-label fw-semibold text-dark ms-3" for="editLargeText">
+                                                    <i class="bi bi-textarea-resize me-2"></i>Large Text
+                                                </label>
+                                            </div>
+                                            <p class="text-muted small mb-0 mt-2">Increases font sizes for easier reading</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="high_contrast" id="editHighContrast" 
+                                                       style="width: 3rem; height: 1.5rem;"
+                                                       {% if profile and profile.high_contrast %}checked{% endif %}>
+                                                <label class="form-check-label fw-semibold text-dark ms-3" for="editHighContrast">
+                                                    <i class="bi bi-circle-half me-2"></i>High Contrast
+                                                </label>
+                                            </div>
+                                            <p class="text-muted small mb-0 mt-2">Improves contrast without breaking theme</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="easy_reading" id="editEasyReading" 
+                                                       style="width: 3rem; height: 1.5rem;"
+                                                       {% if profile and profile.easy_reading %}checked{% endif %}>
+                                                <label class="form-check-label fw-semibold text-dark ms-3" for="editEasyReading">
+                                                    <i class="bi bi-justify-left me-2"></i>Easy Reading
+                                                </label>
+                                            </div>
+                                            <p class="text-muted small mb-0 mt-2">Increases spacing for clarity</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interest Tags -->
+                        <div class="profile-section-card card border-0 shadow-sm mb-4">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="profile-section-icon bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-tags-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">COMMON GROUND</h3>
+                                </div>
+                                
+                                <label class="form-label fw-semibold text-dark mb-3">Interest Tags</label>
+                                <input type="text" class="form-control mb-3" name="interest_tags" 
+                                       value="{{ profile.interest_tags if profile and profile.interest_tags else '' }}"
+                                       placeholder="e.g., Cooking, Walking, Movies, Games, Music, Reading (comma-separated)">
+                                <small class="text-muted">Separate multiple interests with commas. These help others find common ground with you.</small>
+                                
+                                <div class="mt-3">
+                                    <small class="text-muted">Popular tags: Cooking, Walking, Movies, Games, Music, Reading, Technology, Crafts, Gardening, Photography</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('profile') }}" class="btn btn-outline-dark rounded-pill px-4">
+                                <i class="bi bi-arrow-left me-2"></i>CANCEL
+                            </a>
+                            <button type="submit" class="btn btn-dark rounded-pill px-5">
+                                <i class="bi bi-check-circle me-2"></i>SAVE CHANGES
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profilePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

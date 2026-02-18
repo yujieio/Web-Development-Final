@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}FAQ — Community Help Platform{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/help_style.css') }}">
+
+<div class="faq-page">
+    <div class="page-header">
+        <div class="faq-container">
+            <h1 class="page-title">FAQ</h1>
+            <p class="page-subtitle">Common questions and helpful answers.</p>
+        </div>
+    </div>
+
+    <div class="faq-container">
+        <form action="{{ url_for('faq') }}" method="get" class="search-section" id="faqSearchForm">
+            <input type="hidden" name="cat" value="{{ cat }}">
+            <input type="text" name="q" class="search-input" placeholder="Search for answers…" value="{{ q }}" autocomplete="off">
+        </form>
+
+        <div class="faq-pills-wrap">
+            <div class="faq-pills">
+                {% for c in categories %}
+                <a href="{{ url_for('faq', q=q, cat=c, page=1) }}"
+                   class="faq-pill {% if (c == 'All' and (not cat or cat == 'All')) or cat == c %}active{% endif %}">
+                    {{ c }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="faqList" class="faq-list">
+            {% for item in faqs %}
+            <div class="faq-card">
+                <details>
+                    <summary>
+                        <span class="faq-icon"><i class="bi {{ item.icon }}"></i></span>
+                        <span class="faq-q">{{ item.question }}</span>
+                        <span class="faq-arrow">▼</span>
+                    </summary>
+                    <div class="faq-answer">{{ item.answer | replace('\n', '<br>') | safe }}</div>
+                </details>
+            </div>
+            {% else %}
+            <div class="faq-empty">No matching questions. Try a different search or category.</div>
+            {% endfor %}
+        </div>
+
+        <div class="still-need-help">
+            <div class="still-need-help-icon"><i class="bi bi-question-circle"></i></div>
+            <h3 class="still-need-help-title">Still need help?</h3>
+            <p class="still-need-help-desc">Press the button to be directed to the help request page!</p>
+            <a href="{{ url_for('help_requests') }}" class="btn-help">Go to Help Requests</a>
+        </div>
+
+        {% if total_pages > 1 %}
+        <nav class="faq-pagination" aria-label="FAQ pagination">
+            <div class="faq-pagination-inner">
+                {% if page > 1 %}
+                <a href="{{ url_for('faq', q=q, cat=cat, page=page - 1) }}" class="faq-pagination-link faq-pagination-prev">Prev</a>
+                {% else %}
+                <span class="faq-pagination-link faq-pagination-disabled">Prev</span>
+                {% endif %}
+
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                    <span class="faq-pagination-link faq-pagination-current">{{ p }}</span>
+                    {% else %}
+                    <a href="{{ url_for('faq', q=q, cat=cat, page=p) }}" class="faq-pagination-link">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page < total_pages %}
+                <a href="{{ url_for('faq', q=q, cat=cat, page=page + 1) }}" class="faq-pagination-link faq-pagination-next">Next</a>
+                {% else %}
+                <span class="faq-pagination-link faq-pagination-disabled">Next</span>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

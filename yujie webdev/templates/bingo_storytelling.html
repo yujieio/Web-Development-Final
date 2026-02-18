@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-4 py-lg-5 bingo-page">
+        <div class="container-xxl">
+            
+            <!-- Hero Section -->
+            <div class="bingo-hero-section mb-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="bingo-hero-content">
+                            <div class="bingo-hero-badge mb-3">
+                                <span class="badge bg-dark bg-opacity-10 text-dark px-3 py-2">
+                                    <i class="bi bi-stars me-2"></i>Interactive Storytelling
+                                </span>
+                            </div>
+                            <h1 class="bingo-hero-title mb-4">
+                                <span class="bingo-hero-title-main">Bingo</span>
+                                <span class="bingo-hero-title-accent">Storytelling</span>
+                            </h1>
+                            <p class="bingo-hero-description mb-4">
+                                Turn storytelling into a fun, engaging game. Complete prompts, share your stories, 
+                                earn points, and connect with our community through meaningful narratives.
+                            </p>
+                            <div class="bingo-hero-cta d-flex flex-wrap gap-3">
+                                <a href="{{ url_for('bingo_board') }}" class="btn btn-dark btn-lg bingo-hero-btn">
+                                    <i class="bi bi-grid-3x3-gap me-2"></i>View Bingo Board
+                                </a>
+                                {% if current_user and current_profile %}
+                                <a href="{{ url_for('bingo_shop') }}" class="btn btn-warning btn-lg">
+                                    <i class="bi bi-shop me-2"></i>Point Shop
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="bingo-hero-icon-wrapper">
+                            <div class="bingo-hero-icon">
+                                <div class="bingo-hero-icon-inner">
+                                    <div class="bingo-points-display">
+                                        <div class="bingo-points-number">{{ profile.total_points if profile and profile.total_points else 0 }}</div>
+                                        <div class="bingo-points-label">Points</div>
+                                    </div>
+                                    <div class="bingo-hero-icon-decorative">
+                                        <span class="bingo-decorative-dot dot-1"></span>
+                                        <span class="bingo-decorative-dot dot-2"></span>
+                                        <span class="bingo-decorative-dot dot-3"></span>
+                                        <span class="bingo-decorative-dot dot-4"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works Flow Section -->
+            <section id="how-it-works" class="mb-5">
+                <div class="mb-4">
+                    <h2 class="font-oswald mb-2 text-dark">How It Works</h2>
+                    <p class="text-muted">Follow these simple steps to start your storytelling journey</p>
+                </div>
+
+                <div class="bingo-flow-container">
+                    <!-- Step 1: View Bingo Board -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">01</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                        </div>
+                        <h4 class="bingo-step-title">View Bingo Board</h4>
+                        <p class="bingo-step-desc">Browse story prompts on the interactive bingo grid</p>
+                    </div>
+
+                    <div class="bingo-flow-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 2: Choose Prompt -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">02</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-cursor"></i>
+                        </div>
+                        <h4 class="bingo-step-title">Choose Prompt</h4>
+                        <p class="bingo-step-desc">Select a prompt that inspires your story</p>
+                        <span class="bingo-badge">Optional Photo</span>
+                    </div>
+
+                    <div class="bingo-flow-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 3: Write Story -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">03</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <h4 class="bingo-step-title">Write Story</h4>
+                        <p class="bingo-step-desc">Share your narrative based on the prompt</p>
+                    </div>
+
+                    <div class="bingo-flow-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 4: Publish -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">04</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-upload"></i>
+                        </div>
+                        <h4 class="bingo-step-title">Publish</h4>
+                        <p class="bingo-step-desc">Post your story to the community blog</p>
+                    </div>
+
+                    <div class="bingo-flow-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 5: Engage -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">05</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-chat-heart"></i>
+                        </div>
+                        <h4 class="bingo-step-title">Engage</h4>
+                        <p class="bingo-step-desc">Read, comment, and share stories</p>
+                    </div>
+
+                    <div class="bingo-flow-arrow">
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+
+                    <!-- Step 6: Earn Points -->
+                    <div class="bingo-step-card">
+                        <div class="bingo-step-number">06</div>
+                        <div class="bingo-step-icon">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <h4 class="bingo-step-title">Earn Points</h4>
+                        <p class="bingo-step-desc">Get rewarded for posting and engaging</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Benefits + CRUD Section -->
+            <section class="mb-5">
+                <div class="row g-4">
+                    <!-- Benefits Column -->
+                    <div class="col-lg-6">
+                        <div class="bingo-section-card card border-0 shadow-sm h-100">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="bingo-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-star-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="font-oswald mb-0 text-dark">Benefits</h3>
+                                </div>
+                                
+                                <div class="bingo-benefit-item mb-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-benefit-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-lightbulb"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-semibold text-dark mb-2">Easy Starting Point</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Prompts help users start sharing without feeling stuck. 
+                                                No blank page anxiety—just pick a topic and begin.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bingo-benefit-item mb-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-benefit-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-semibold text-dark mb-2">Ongoing Engagement</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Points and progress tracking encourage returning. 
+                                                Watch your bingo board fill up as you share more stories.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bingo-benefit-item">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-benefit-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-heart"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-semibold text-dark mb-2">Low Pressure Experience</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Guided format feels friendly for seniors and youths. 
+                                                Share at your own pace, no pressure to be perfect.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Story Features Column -->
+                    <div class="col-lg-6">
+                        <div class="bingo-section-card card border-0 shadow-sm h-100">
+                            <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                    <div class="bingo-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-magic fs-3"></i>
+                                    </div>
+                                    <h3 class="font-oswald mb-0 text-dark">Story Features</h3>
+                                </div>
+                                
+                                <div class="bingo-feature-item mb-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-feature-icon-wrapper rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-pencil-square fs-4"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-semibold text-dark mb-2">Share Your Story</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Choose a bingo prompt that inspires you and write your unique narrative. 
+                                                Add photos to bring your story to life!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bingo-feature-item mb-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-feature-icon-wrapper rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-book-open fs-4"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-semibold text-dark mb-2">Explore Stories</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Browse the community blog, discover amazing stories from others, 
+                                                and engage with meaningful conversations through comments.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bingo-feature-item mb-4">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-feature-icon-wrapper rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-pencil-fill fs-4"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-semibold text-dark mb-2">Edit & Refine</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Update your stories anytime, add more details, or refine your narrative 
+                                                to make it even better.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bingo-feature-item">
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="bingo-feature-icon-wrapper rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                            <i class="bi bi-shield-check fs-4"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-semibold text-dark mb-2">Safe & Moderated</h5>
+                                            <p class="text-muted mb-0" style="line-height: 1.8;">
+                                                Your stories are protected. You can remove your posts anytime, 
+                                                and our moderators ensure a respectful community environment.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Points & Rewards Preview Section -->
+            <section class="bingo-rewards-section">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="bingo-widget-card card border-0 shadow-sm text-center">
+                            <div class="card-body p-4">
+                                <div class="bingo-widget-icon rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                    <i class="bi bi-star-fill fs-2"></i>
+                                </div>
+                                <h4 class="font-oswald mb-2 text-dark">Earn Points</h4>
+                                <p class="text-muted small mb-0">
+                                    Post stories, comment, and share to accumulate points
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bingo-widget-card card border-0 shadow-sm text-center">
+                            <div class="card-body p-4">
+                                <div class="bingo-widget-icon rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                    <i class="bi bi-award fs-2"></i>
+                                </div>
+                                <h4 class="font-oswald mb-2 text-dark">Unlock Badges</h4>
+                                <p class="text-muted small mb-0">
+                                    Achieve milestones and collect special recognition badges
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bingo-widget-card card border-0 shadow-sm text-center">
+                            <div class="card-body p-4">
+                                <div class="bingo-widget-icon rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                    <i class="bi bi-gift fs-2"></i>
+                                </div>
+                                <h4 class="font-oswald mb-2 text-dark">Redeem Rewards</h4>
+                                <p class="text-muted small mb-0">
+                                    Use your points to unlock exclusive rewards and perks
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% if profile %}
+<div class="mb-4">
+    <div class="d-flex align-items-center mb-3">
+        <div class="profile-info-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+            <i class="bi bi-person-check fs-3"></i>
+        </div>
+        <h3 class="fw-bold font-oswald mb-0 text-dark">YOUR PROFILE INFO</h3>
+    </div>
+    <div class="profile-info-box d-flex align-items-center gap-3 p-3">
+        <div class="flex-shrink-0">
+            <img src="{{ (profile.profile_picture_url if profile.profile_picture_url else url_for('static', filename='images/default-avatar.svg')) }}{{ '?v=' ~ profile.date_updated.timestamp()|int if profile.profile_picture_url and profile.date_updated else '' }}" 
+                 alt="Profile" 
+                 class="rounded-circle profile-info-avatar">
+        </div>
+        <div class="flex-grow-1">
+            <div class="fw-bold text-dark mb-1"><span class="name-style-{{ profile.name_style|default('default') }}">{{ profile.name }}</span></div>
+            <div class="small text-muted">
+                <span class="badge bg-primary text-white">{{ profile.user_type }}</span>
+                <span class="ms-2">{{ message|default('Your information will be automatically used') }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

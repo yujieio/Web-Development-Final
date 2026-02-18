@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-7">
+
+                    <div class="auth-card card border-0 shadow-lg">
+                        <div class="auth-card-header text-center">
+                            <div class="auth-logo mb-3">
+                                <div class="auth-logo-icon">
+                                    <i class="bi bi-person-hearts"></i>
+                                </div>
+                            </div>
+                            <h1 class="font-oswald mb-1 text-white">WELCOME BACK</h1>
+                            <p class="text-white-50 mb-0">Sign in to your MasterCoders account</p>
+                        </div>
+
+                        <div class="card-body p-4 p-lg-5">
+                            <form method="POST" action="{{ url_for('login') }}" novalidate>
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark">
+                                        <i class="bi bi-person me-2"></i>Username or Email
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg auth-input" 
+                                           name="username" value="{{ username|default('') }}"
+                                           placeholder="Enter your username or email" required autofocus>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark">
+                                        <i class="bi bi-lock me-2"></i>Password
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control form-control-lg auth-input" 
+                                               name="password" id="loginPassword"
+                                               placeholder="Enter your password" required>
+                                        <button class="btn btn-outline-dark" type="button" onclick="togglePassword('loginPassword', this)">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark btn-lg w-100 auth-submit-btn mb-4">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                </button>
+
+                                <div class="text-center">
+                                    <p class="text-muted mb-0">
+                                        Don't have an account? 
+                                        <a href="{{ url_for('signup') }}" class="auth-link fw-semibold">Create Account</a>
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+</script>
+{% endblock %}

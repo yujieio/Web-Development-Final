@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="skills-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 text-dark">CREATE SKILLS POST</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Share your skills or request help from the community</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <form method="POST" action="{{ url_for('create_skill') }}">
+                                
+                                <!-- Post Details Section -->
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-file-text fs-3"></i>
+                                        </div>
+                                        <h3 class="fw-bold font-oswald mb-0 text-dark">POST DETAILS</h3>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold text-dark" for="title">Title *</label>
+                                        <input class="form-control" id="title" name="title" type="text" 
+                                               placeholder="e.g., Teach basic smartphone skills" required minlength="3">
+                                        <small class="text-muted">Minimum 3 characters</small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold text-dark" for="description">Description *</label>
+                                        <textarea class="form-control" id="description" name="description" rows="6" 
+                                                  placeholder="Describe what you want to offer or request. Be specific about your skills, experience, or what you're looking for..." 
+                                                  required></textarea>
+                                        <small class="text-muted">Provide details to help others understand your post</small>
+                                    </div>
+                                </div>
+
+                                <!-- Category & Type Section -->
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-tags fs-3"></i>
+                                        </div>
+                                        <h3 class="fw-bold font-oswald mb-0 text-dark">CATEGORY & TYPE</h3>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark" for="category">Category *</label>
+                                            <select class="form-select" id="category" name="category" required>
+                                                <option value="" selected disabled>Choose a category…</option>
+                                                <option>Technology</option>
+                                                <option>Life Skills</option>
+                                                <option>Health</option>
+                                                <option>Language</option>
+                                                <option>Hobbies</option>
+                                                <option>Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark" for="skill_type">Post Type *</label>
+                                            <select class="form-select" id="skill_type" name="skill_type" required>
+                                                <option value="" selected disabled>Choose type…</option>
+                                                <option value="Offer">I'm Offering</option>
+                                                <option value="Request">I'm Requesting</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% include '_profile_info_posting.html' %}
+
+                                <!-- Form Actions -->
+                                <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                                    <a href="{{ url_for('skills_exchange') }}" class="btn btn-outline-dark rounded-pill px-4">
+                                        <i class="bi bi-arrow-left me-2"></i>Back to Board
+                                    </a>
+                                    <button class="btn btn-dark btn-lg rounded-pill px-5" type="submit">
+                                        <i class="bi bi-check2-circle me-2"></i>PUBLISH POST
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+

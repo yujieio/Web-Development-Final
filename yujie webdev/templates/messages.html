@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta charset="UTF-8" />
+  <title>Messaging App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container-fluid px-4">
+            
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('home') }}">
+                <div class="brand-logo-wrapper">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="MasterCoders - Seniors × Youth Connection" class="brand-logo-img">
+                </div>
+                <span class="brand-text">MasterCoders</span>
+            </a>
+            
+            <button class="navbar-toggler navbar-toggler-modern" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon-modern">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                
+                <ul class="navbar-nav mx-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'skills_exchange' %}active{% endif %}" href="{{ url_for('skills_exchange') }}">Skills Exchange</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Event Planner</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'talk' %}active{% endif %}" href="{{ url_for('talk') }}">Talk</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Journal</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Help!</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">FAQ</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0 navbar-actions">
+                    <a href="{{ url_for('notifications') }}" class="nav-icon-wrapper position-relative" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                        <i class="bi bi-bell"></i>
+                        {% if notification_count and notification_count > 0 %}
+                        <span class="notification-badge">{{ notification_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('messages') }}" class="nav-icon-wrapper" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Messages">
+                        <i class="bi bi-envelope"></i>
+                    </a>
+
+                    <div class="user-avatar-container dropdown">
+                        <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ (current_profile.profile_picture_url if current_profile and current_profile.profile_picture_url else url_for('static', filename='images/default-avatar.svg')) }}{{ '?v=' ~ current_profile.date_updated.timestamp()|int if current_profile and current_profile.profile_picture_url and current_profile.date_updated else '' }}" 
+                                 alt="User" 
+                                 class="user-avatar">
+                            <i class="bi bi-chevron-down text-white small"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-modern" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile') }}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('profile_edit') }}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+  <div class="app">
+
+    <div class="sidebar">
+      <h2>Chats</h2>
+      
+ <div class="search-container">
+  <span class="search-icon"></span>
+  <input type="text" id="searchInput" placeholder="Search for your friends friends..."
+    oninput="searchContacts()" />
+</div>
+
+    <button class="add-friend-btn" onclick="openAddFriendModal()">
+  ＋ Add Friend
+</button>
+
+    </div>
+
+    <div class="chat">
+      <div class="chat-header" id="chatHeader">
+<div class="chat-header-content" onclick="toggleProfile()">
+  <div class="header-avatar" id="headerAvatar">N</div>
+
+  <h3>
+    <span id="chatName">Name</span>
+    <span id="blockedLabel" class="blocked-label hidden">Blocked</span>
+  </h3>
+</div>
+
+
+
+      </div>
+<div id="emptyState" class="empty-state">
+  <h1>
+    Find a friend and<br />
+    start chatting <span>now!</span>
+  </h1>
+</div>
+
+
+  <div id="messages" class="messages"></div>
+
+<div id="typingIndicator" class="typing-indicator hidden">
+  <span class="typing-name">typing</span>
+  <span class="dots">
+    <span>.</span><span>.</span><span>.</span>
+  </span>
+</div>
+
+
+      <div class="input-area" id="inputArea">
+
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Send something..."
+          onkeydown="handleEnter(event)"
+        />
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Profile -->
+    <div class="profile hidden" id="profilePanel">
+  <div class="avatar" id="profileAvatar"></div>
+  <h2 id="profileName">Name</h2>
+
+  <button class="danger" onclick="reportChat()">Report</button>
+  <button class="danger" onclick="blockChat()">Block</button>
+  <button class="danger" onclick="deleteChat()">Delete</button>
+</div>
+
+
+  </div>
+
+  <div class="modal fade" id="actionModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body" id="modalBody"></div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          id="modalConfirmBtn"
+        >
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="addFriendModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Add a Friend</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input
+          type="text"
+          id="friendSearchInput"
+          class="form-control mb-3"
+          placeholder="Search for a user..."
+          oninput="renderFriendResults()"
+        />
+
+        <div id="friendResults"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Active link highlighting
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

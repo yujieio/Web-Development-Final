@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="skills-page-bg" data-quick-saved="{{ 1 if saved else 0 }}">
+  <div class="container-fluid py-4 py-lg-5 skills-page">
+    <div class="container-xxl">
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-3">
+        <div>
+          <h1 class="mb-1">Skills Exchange Board</h1>
+          <p class="text-muted mb-0">Offers and requests for skills between youth and seniors.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('create_skill') }}" class="btn btn-dark">
+            <i class="bi bi-plus-lg"></i> Create New Skill Post
+          </a>
+        </div>
+      </div>
+
+      {# Quick toggles row (wireframe-style) #}
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <div class="btn-group" role="group" aria-label="Quick filters">
+          <a class="btn btn-outline-secondary {% if not selected_skill_types and not saved %}active{% endif %}"
+             href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, page=1, per_page=per_page, category=selected_categories, user_type=selected_user_types) }}">
+            All Active Posts
+          </a>
+          <a class="btn btn-outline-secondary {% if saved %}active{% endif %}"
+             href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, page=1, per_page=per_page, saved=1, category=selected_categories, user_type=selected_user_types, skill_type=selected_skill_types) }}">
+            Saved Posts
+          </a>
+          <a class="btn btn-outline-secondary {% if selected_skill_types == ['Request'] %}active{% endif %}"
+             href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, page=1, per_page=per_page, skill_type='Request', category=selected_categories, user_type=selected_user_types) }}">
+            Requested Only
+          </a>
+        </div>
+
+        <div class="ms-auto d-flex flex-wrap gap-2 align-items-center">
+          <form class="d-flex gap-2 align-items-center" method="GET" action="{{ url_for('skills_exchange') }}">
+            {# preserve filters #}
+            {% for c in selected_categories %}<input type="hidden" name="category" value="{{ c }}">{% endfor %}
+            {% for s in selected_skill_types %}<input type="hidden" name="skill_type" value="{{ s }}">{% endfor %}
+            {% for u in selected_user_types %}<input type="hidden" name="user_type" value="{{ u }}">{% endfor %}
+            <input type="hidden" name="view" value="{{ view }}">
+            <input type="hidden" name="per_page" value="{{ per_page }}">
+            <input type="hidden" name="page" value="1">
+
+            <div class="input-group skills-search">
+              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+              <input class="form-control" type="search" name="q" placeholder="Search posts..." value="{{ q }}">
+            </div>
+
+            <select class="form-select skills-sort" name="sort" aria-label="Sort">
+              <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest first</option>
+              <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>Oldest first</option>
+              <option value="title" {% if sort == 'title' %}selected{% endif %}>Title (A–Z)</option>
+            </select>
+
+            <button class="btn btn-dark" type="submit">Search</button>
+          </form>
+
+          <div class="btn-group" role="group" aria-label="View toggle">
+            <a class="btn btn-outline-secondary {% if view != 'list' %}active{% endif %}"
+               title="Grid view"
+               href="{{ url_for('skills_exchange', q=q, sort=sort, view='grid', per_page=per_page, page=1, saved=saved, category=selected_categories, skill_type=selected_skill_types, user_type=selected_user_types) }}">
+              <i class="bi bi-grid"></i>
+            </a>
+            <a class="btn btn-outline-secondary {% if view == 'list' %}active{% endif %}"
+               title="List view"
+               href="{{ url_for('skills_exchange', q=q, sort=sort, view='list', per_page=per_page, page=1, saved=saved, category=selected_categories, skill_type=selected_skill_types, user_type=selected_user_types) }}">
+              <i class="bi bi-list"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        {# Sidebar filters #}
+        <div class="col-lg-3">
+          <div class="card border-0 shadow-sm skills-filter-card">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-funnel"></i>
+                  <h5 class="mb-0">Filter Posts</h5>
+                </div>
+                <a class="text-decoration-none small"
+                   href="{{ url_for('skills_exchange') }}">
+                  Clear all
+                </a>
+              </div>
+
+              <form method="GET" action="{{ url_for('skills_exchange') }}" id="skillsFilters">
+                {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+                <input type="hidden" name="sort" value="{{ sort }}">
+                <input type="hidden" name="view" value="{{ view }}">
+                <input type="hidden" name="page" value="1">
+                {% if saved %}<input type="hidden" name="saved" value="{{ saved }}">{% endif %}
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Skill Type</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="skill_type" value="Offer" id="stOffer"
+                           {% if 'Offer' in selected_skill_types %}checked{% endif %}>
+                    <label class="form-check-label" for="stOffer">
+                      Offer
+                      {% if 'Offer' in selected_skill_types %}<span class="badge bg-primary ms-1">Active</span>{% endif %}
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="skill_type" value="Request" id="stRequest"
+                           {% if 'Request' in selected_skill_types %}checked{% endif %}>
+                    <label class="form-check-label" for="stRequest">
+                      Request
+                      {% if 'Request' in selected_skill_types %}<span class="badge bg-primary ms-1">Active</span>{% endif %}
+                    </label>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">User Type</label>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="user_type" value="Youth" id="utYouth"
+                           {% if 'Youth' in selected_user_types %}checked{% endif %}>
+                    <label class="form-check-label" for="utYouth">
+                      Youth
+                      {% if 'Youth' in selected_user_types %}<span class="badge bg-primary ms-1">Active</span>{% endif %}
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="user_type" value="Senior" id="utSenior"
+                           {% if 'Senior' in selected_user_types %}checked{% endif %}>
+                    <label class="form-check-label" for="utSenior">
+                      Senior
+                      {% if 'Senior' in selected_user_types %}<span class="badge bg-primary ms-1">Active</span>{% endif %}
+                    </label>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Categories</label>
+                  <div class="skills-filter-scroll">
+                    {% for cat in available_categories %}
+                      {% set catId = 'cat_' ~ loop.index %}
+                      {% if cat == 'Technology' %}
+                        {% set badgeClass = 'skill-category-technology' %}
+                      {% elif cat == 'Life Skills' %}
+                        {% set badgeClass = 'skill-category-life-skills' %}
+                      {% elif cat == 'Health' %}
+                        {% set badgeClass = 'skill-category-health' %}
+                      {% elif cat == 'Language' %}
+                        {% set badgeClass = 'skill-category-language' %}
+                      {% elif cat == 'Hobbies' %}
+                        {% set badgeClass = 'skill-category-hobbies' %}
+                      {% else %}
+                        {% set badgeClass = 'skill-category-other' %}
+                      {% endif %}
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="category" value="{{ cat }}" id="{{ catId }}"
+                               {% if cat in selected_categories %}checked{% endif %}>
+                        <label class="form-check-label d-flex align-items-center gap-2" for="{{ catId }}">
+                          <span class="badge skill-category-badge {{ badgeClass }} small">{{ cat }}</span>
+                          {% if cat in selected_categories %}<span class="badge bg-primary ms-1 small">Active</span>{% endif %}
+                        </label>
+                      </div>
+                    {% else %}
+                      <p class="text-muted small mb-0">No categories yet.</p>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label fw-bold" for="perPage">Posts per page</label>
+                  <select class="form-select" id="perPage" name="per_page">
+                    <option value="6" {% if per_page == 6 %}selected{% endif %}>6</option>
+                    <option value="9" {% if per_page == 9 %}selected{% endif %}>9</option>
+                    <option value="12" {% if per_page == 12 %}selected{% endif %}>12</option>
+                    <option value="18" {% if per_page == 18 %}selected{% endif %}>18</option>
+                    <option value="24" {% if per_page == 24 %}selected{% endif %}>24</option>
+                  </select>
+                </div>
+
+                <button class="btn btn-dark w-100 mb-2" type="submit">
+                  <i class="bi bi-funnel-fill"></i> Apply Filters
+                </button>
+                
+                {% if selected_categories or selected_skill_types or selected_user_types or q %}
+                <a href="{{ url_for('skills_exchange', sort=sort, view=view, per_page=per_page) }}" class="btn btn-outline-secondary w-100">
+                  <i class="bi bi-x-circle"></i> Clear Filters
+                </a>
+                {% endif %}
+
+                <div class="form-check mt-3">
+                  <input class="form-check-input" type="checkbox" id="savedOnly" {% if saved %}checked{% endif %}>
+                  <label class="form-check-label" for="savedOnly">Saved only</label>
+                </div>
+              </form>
+
+              <div class="mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted small">Results</span>
+                  <span class="fw-bold">{{ total }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Main results #}
+        <div class="col-lg-9">
+          <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-3">
+            <div class="text-muted small">
+              Showing <span class="fw-bold">{{ posts|length }}</span> on this page (page {{ page }} of {{ pages }})
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+              <span class="text-muted small">Tip: click the bookmark to save posts.</span>
+            </div>
+          </div>
+
+          <div class="skills-results {% if view == 'list' %}skills-view-list{% else %}skills-view-grid{% endif %}" id="skillsResults">
+            <div class="row g-3">
+              {% for post in posts %}
+              <div class="{% if view == 'list' %}col-12{% else %}col-md-6 col-xl-4{% endif %} skills-item" data-post-id="{{ post.id }}">
+                <div class="card h-100 border-0 shadow-sm skill-card">
+                  <div class="card-body p-3 p-lg-4">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                      <div class="d-flex flex-wrap gap-2">
+                        {% if post.category == 'Technology' %}
+                          <span class="badge skill-category-badge skill-category-technology">{{ post.category }}</span>
+                        {% elif post.category == 'Life Skills' %}
+                          <span class="badge skill-category-badge skill-category-life-skills">{{ post.category }}</span>
+                        {% elif post.category == 'Health' %}
+                          <span class="badge skill-category-badge skill-category-health">{{ post.category }}</span>
+                        {% elif post.category == 'Language' %}
+                          <span class="badge skill-category-badge skill-category-language">{{ post.category }}</span>
+                        {% elif post.category == 'Hobbies' %}
+                          <span class="badge skill-category-badge skill-category-hobbies">{{ post.category }}</span>
+                        {% else %}
+                          <span class="badge skill-category-badge skill-category-other">{{ post.category }}</span>
+                        {% endif %}
+                        {% if post.skill_type == 'Offer' %}
+                          <span class="badge bg-success-subtle text-success border border-success-subtle">OFFER</span>
+                        {% else %}
+                          <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">REQUEST</span>
+                        {% endif %}
+                      </div>
+                      <button class="btn btn-sm btn-outline-secondary skills-save-btn" type="button" title="Save post" aria-label="Save post">
+                        <i class="bi bi-bookmark"></i>
+                      </button>
+                    </div>
+
+                    <h6 class="fw-bold mb-2">{{ post.title }}</h6>
+                    <p class="text-muted small mb-3 skills-desc">{{ post.description }}</p>
+
+                    <div class="d-flex align-items-center justify-content-between pt-3 border-top">
+                      <div class="d-flex align-items-center gap-2">
+                        {% if post.profile_picture_url %}
+                        <img src="{{ post.profile_picture_url }}" 
+                             alt="{{ post.author_name or post.user_type }}" 
+                             class="rounded-circle" 
+                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #dee2e6;">
+                        {% else %}
+                        <div class="skills-avatar">
+                          {{ (post.author_name or post.user_type)[0] }}
+                        </div>
+                        {% endif %}
+                        <div class="small">
+                          <div class="text-muted">Posted by</div>
+                          <div class="fw-semibold"><span class="name-style-{{ get_name_style(post.user_id) if post.user_id else 'default' }}">{{ post.author_name or post.user_type }}</span></div>
+                          {% if post.author_name %}
+                          <div class="text-muted" style="font-size: 0.75rem;">{{ post.user_type }}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="text-end">
+                        {% if post.skill_type == 'Offer' and session.get('user_id') and (not post.user_id or session.get('user_id') != post.user_id) %}
+                        <a class="btn btn-sm btn-success mb-1 d-inline-block"
+                           href="{{ url_for('request_chat_skill_offer', post_id=post.id) }}">
+                          <i class="bi bi-chat-dots"></i> Request chat
+                        </a>
+                        <br>
+                        {% endif %}
+                        <a class="btn btn-sm btn-outline-dark"
+                           href="{{ url_for('skill_detail', post_id=post.id) }}">
+                          View Details
+                        </a>
+                        <div class="text-muted small mt-1">
+                          {% if post.date_posted %}{{ post.date_posted.strftime('%b %d, %Y') }}{% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <div class="col-12">
+                <div class="text-center py-5 bg-white rounded-3 shadow-sm border">
+                  <h3 class="text-muted mb-2">No matching posts</h3>
+                  <p class="text-muted mb-4">Try clearing filters or searching a different keyword.</p>
+                  <a href="{{ url_for('skills_exchange') }}" class="btn btn-outline-dark">Clear filters</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          {# Pagination #}
+          {% if pages > 1 %}
+          <nav class="d-flex justify-content-center mt-4" aria-label="Skills pagination">
+            <ul class="pagination pagination-sm">
+              <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, per_page=per_page, page=page-1, saved=saved, category=selected_categories, skill_type=selected_skill_types, user_type=selected_user_types) }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+
+              {% set start = page - 2 %}
+              {% set end = page + 2 %}
+              {% if start < 1 %}{% set start = 1 %}{% endif %}
+              {% if end > pages %}{% set end = pages %}{% endif %}
+
+              {% for p in range(start, end + 1) %}
+              <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, per_page=per_page, page=p, saved=saved, category=selected_categories, skill_type=selected_skill_types, user_type=selected_user_types) }}">{{ p }}</a>
+              </li>
+              {% endfor %}
+
+              <li class="page-item {% if page >= pages %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('skills_exchange', q=q, sort=sort, view=view, per_page=per_page, page=page+1, saved=saved, category=selected_categories, skill_type=selected_skill_types, user_type=selected_user_types) }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          {% endif %}
+
+          {# CTA (wireframe bottom banner) #}
+          <div class="skills-cta mt-5">
+            <div class="skills-cta-inner text-center">
+              <h3 class="mb-2">Ready to Start Your Skills Exchange Journey?</h3>
+              <p class="text-muted mb-4">Join the community and share knowledge across generations through meaningful skill exchanges.</p>
+              <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <a class="btn btn-dark" href="{{ url_for('create_skill') }}">Create a post</a>
+                <a class="btn btn-outline-dark" href="{{ url_for('skills_exchange') }}">Learn more</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const SAVED_KEY = "skills_saved_posts_v1";
+    const savedOnlyCheckbox = document.getElementById("savedOnly");
+    const resultsRoot = document.getElementById("skillsResults");
+    const quickSavedActive = document.querySelector(".skills-page-bg")?.dataset?.quickSaved === "1";
+    const filterForm = document.getElementById("skillsFilters");
+
+    function loadSaved() {
+      try {
+        const raw = localStorage.getItem(SAVED_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveSaved(ids) {
+      try {
+        localStorage.setItem(SAVED_KEY, JSON.stringify(ids));
+      } catch (e) {}
+    }
+
+    function setBtnState(btn, isSaved) {
+      btn.classList.toggle("btn-dark", isSaved);
+      btn.classList.toggle("btn-outline-secondary", !isSaved);
+      const icon = btn.querySelector("i");
+      if (!icon) return;
+      icon.classList.toggle("bi-bookmark", !isSaved);
+      icon.classList.toggle("bi-bookmark-fill", isSaved);
+    }
+
+    function applySavedFilter() {
+      if (!savedOnlyCheckbox || !resultsRoot) return;
+      const savedOnly = savedOnlyCheckbox.checked;
+      const savedIds = new Set(loadSaved().map(String));
+      const items = resultsRoot.querySelectorAll(".skills-item");
+      items.forEach((el) => {
+        const id = el.getAttribute("data-post-id");
+        const keep = !savedOnly || savedIds.has(String(id));
+        el.style.display = keep ? "" : "none";
+      });
+    }
+
+    function init() {
+      if (!resultsRoot) return;
+      const savedIds = loadSaved().map(String);
+      const savedSet = new Set(savedIds);
+
+      resultsRoot.querySelectorAll(".skills-item").forEach((item) => {
+        const id = String(item.getAttribute("data-post-id"));
+        const btn = item.querySelector(".skills-save-btn");
+        if (!btn) return;
+        setBtnState(btn, savedSet.has(id));
+        btn.addEventListener("click", () => {
+          const ids = loadSaved().map(String);
+          const idx = ids.indexOf(id);
+          const isSavedNow = idx === -1;
+          if (isSavedNow) ids.push(id);
+          else ids.splice(idx, 1);
+          saveSaved(ids);
+          setBtnState(btn, isSavedNow);
+          applySavedFilter();
+        });
+      });
+
+      if (savedOnlyCheckbox) {
+        // If user arrived via "Saved Posts" quick toggle, check the box automatically.
+        if (quickSavedActive) savedOnlyCheckbox.checked = true;
+        savedOnlyCheckbox.addEventListener("change", applySavedFilter);
+      }
+
+      applySavedFilter();
+
+      // Ensure filter form works correctly
+      if (filterForm) {
+        // Make sure the form properly handles checkboxes
+        filterForm.addEventListener("submit", function(e) {
+          // Form will submit normally with checked checkboxes
+          // Unchecked checkboxes won't be included, which is correct
+        });
+
+        // Optional: Auto-submit on checkbox change (uncomment if desired)
+        // const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
+        // checkboxes.forEach(function(cb) {
+        //   cb.addEventListener("change", function() {
+        //     filterForm.submit();
+        //   });
+        // });
+
+        // Auto-submit when "Posts per page" changes
+        const perPageSelect = document.getElementById("perPage");
+        if (perPageSelect) {
+          perPageSelect.addEventListener("change", function() {
+            filterForm.submit();
+          });
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 bingo-title">WRITE YOUR STORY</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Choose a prompt and share your narrative with the community</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <form method="POST" action="{{ url_for('bingo_create_story') }}" enctype="multipart/form-data">
+                                
+                                <!-- Prompt Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold text-dark mb-3">Choose a Bingo Prompt *</label>
+                                    <div class="bingo-prompt-grid">
+                                        {% for prompt in prompts %}
+                                        <div class="bingo-prompt-option">
+                                            <input type="radio" 
+                                                   class="btn-check" 
+                                                   name="prompt_id" 
+                                                   id="prompt{{ prompt.id }}" 
+                                                   value="{{ prompt.id }}"
+                                                   {% if selected_prompt_id and selected_prompt_id == prompt.id %}checked{% endif %}
+                                                   required>
+                                            <label class="btn btn-outline-dark w-100 text-start p-3 h-100 d-flex align-items-center" for="prompt{{ prompt.id }}">
+                                                <i class="bi bi-grid-3x3-gap me-2 flex-shrink-0"></i>
+                                                <span>{{ prompt.prompt_text }}</span>
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                {% include '_profile_info_posting.html' %}
+
+                                <!-- Story Title -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark">Story Title *</label>
+                                    <input type="text" class="form-control" name="title" 
+                                           placeholder="Give your story a title" required minlength="3">
+                                    <small class="text-muted">Minimum 3 characters</small>
+                                </div>
+
+                                <!-- Story Content -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark">Your Story *</label>
+                                    <textarea class="form-control" name="story_content" rows="8" 
+                                              placeholder="Write your story here... Share your memories, experiences, and thoughts." 
+                                              required minlength="10"></textarea>
+                                    <small class="text-muted">Minimum 10 characters. Be creative and share from the heart!</small>
+                                </div>
+
+                                <!-- Optional Photo -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-dark">Photo (Optional)</label>
+                                    {% set field_name='photo' %}{% set preview_id='bingoPhotoPreview' %}{% set input_id='bingoPhotoInput' %}{% set required=false %}{% set label='Upload a photo' %}
+                                    {% include '_photo_upload_field.html' %}
+                                </div>
+
+                                <!-- Submit Buttons -->
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ url_for('bingo_board') }}" class="btn btn-outline-dark rounded-pill px-4">
+                                        <i class="bi bi-arrow-left me-2"></i>Back to Board
+                                    </a>
+                                    <button type="submit" class="btn btn-dark btn-lg rounded-pill px-5">
+                                        <i class="bi bi-upload me-2"></i>Publish Story
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById('bingoPhotoInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(ev) { document.getElementById('bingoPhotoPreview').src = ev.target.result; };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,541 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            
+            <!-- Page Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 text-dark">YOUR BRIDGE PROFILE</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Build trust, start conversations, and connect meaningfully across generations</p>
+            </div>
+
+            {% if profile %}
+            <!-- Profile Header Card -->
+            <div class="profile-header-card card border-0 shadow-lg mb-4">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="profile-photo-wrapper">
+                                <img src="{{ (profile.profile_picture_url if profile and profile.profile_picture_url else url_for('static', filename='images/default-avatar.svg')) }}{{ '?v=' ~ profile.date_updated.timestamp()|int if profile and profile.profile_picture_url and profile.date_updated else '' }}" 
+                                     alt="Profile Photo" 
+                                     class="profile-photo">
+                                <button class="btn btn-sm btn-dark profile-photo-edit" type="button" title="Change photo">
+                                    <i class="bi bi-camera-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
+                                <h2 class="display-5 fw-bold font-oswald mb-0 text-dark"><span class="name-style-{{ profile.name_style|default('default') }}">{{ profile.name.upper() }}</span></h2>
+                                <span class="badge profile-type-badge px-3 py-2 rounded-pill">
+                                    <i class="bi bi-person-fill me-1"></i>{{ profile.user_type.upper() }}
+                                </span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                {% if profile.languages %}
+                                    {% for lang in profile.languages.split(',') %}
+                                        <span class="badge bg-light text-dark border px-3 py-2">
+                                            <i class="bi bi-translate me-1"></i>{{ lang.strip() }}
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-muted">No languages set</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-dark mb-0" style="opacity: 0.8; line-height: 1.8;">
+                                {{ profile.short_intro if profile.short_intro else 'Add a short introduction about yourself...' }}
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{{ url_for('bingo_shop') }}" class="btn btn-warning rounded-pill px-4">
+                                    <i class="bi bi-shop me-2"></i>Point Shop ({{ profile.total_points or 0 }} pts)
+                                </a>
+                                <a href="{{ url_for('profile_edit') }}" class="btn btn-dark rounded-pill px-4">
+                                    <i class="bi bi-pencil me-2"></i>EDIT
+                                </a>
+                                <button class="btn btn-outline-dark rounded-pill px-4" onclick="shareProfile()">
+                                    <i class="bi bi-share me-2"></i>SHARE
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- No Profile Card -->
+            <div class="profile-header-card card border-0 shadow-lg mb-4">
+                <div class="card-body p-4 p-lg-5 text-center">
+                    <div class="mb-4">
+                        <div class="profile-photo-wrapper mx-auto mb-3">
+                            <div class="profile-photo bg-light d-flex align-items-center justify-content-center">
+                                <i class="bi bi-person-plus fs-1 text-muted"></i>
+                            </div>
+                        </div>
+                        <h2 class="display-5 fw-bold font-oswald mb-3 text-dark">NO PROFILE YET</h2>
+                        <p class="lead text-dark mb-4" style="opacity: 0.8;">
+                            Create your Bridge Profile to start connecting with others
+                        </p>
+                        <a href="{{ url_for('profile_create') }}" class="btn btn-dark btn-lg rounded-pill px-5">
+                            <i class="bi bi-plus-circle me-2"></i>CREATE PROFILE
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile %}
+            <div class="row g-4">
+                <!-- Main Content Column -->
+                <div class="col-lg-8">
+                    
+                    <!-- 1. Key Profile Info -->
+                    <div class="profile-section-card card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                <div class="profile-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                    <i class="bi bi-person-circle fs-3"></i>
+                                </div>
+                                <h3 class="fw-bold font-oswald mb-0 text-dark">ABOUT YOU</h3>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small mb-1">Full Name</label>
+                                        <div class="fw-semibold text-dark">{{ profile.name if profile else 'Not set' }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small mb-1">User Type</label>
+                                        <div>
+                                            <span class="badge bg-warning text-dark px-3 py-2">{{ profile.user_type.upper() if profile else 'NOT SET' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small mb-1">Languages</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            {% if profile and profile.languages %}
+                                                {% for lang in profile.languages.split(',') %}
+                                                    <span class="badge bg-light text-dark border">{{ lang.strip() }}</span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="text-muted small">No languages added</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small mb-1">Short Introduction</label>
+                                        <p class="text-dark mb-0" style="line-height: 1.8;">
+                                            {{ profile.short_intro if profile and profile.short_intro else 'Add a short introduction about yourself to help others get to know you better.' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Preferred Interaction Style -->
+                    <div class="profile-section-card card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                <div class="profile-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                    <i class="bi bi-people-fill fs-3"></i>
+                                </div>
+                                <h3 class="fw-bold font-oswald mb-0 text-dark">HOW YOU CONNECT</h3>
+                            </div>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark mb-3">Interaction Type</label>
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="interactionType" id="oneToOne" 
+                                               {% if profile and profile.interaction_type == '1-to-1' %}checked{% elif not profile %}checked{% endif %} disabled>
+                                        <label class="btn btn-outline-dark" for="oneToOne">
+                                            <i class="bi bi-person-fill me-2"></i>1-to-1
+                                        </label>
+                                        <input type="radio" class="btn-check" name="interactionType" id="group"
+                                               {% if profile and profile.interaction_type == 'Group' %}checked{% endif %} disabled>
+                                        <label class="btn btn-outline-dark" for="group">
+                                            <i class="bi bi-people-fill me-2"></i>Group
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        Current: <strong>{{ profile.interaction_type if profile else '1-to-1' }}</strong> 
+                                        <a href="{{ url_for('profile_edit') }}" class="text-decoration-none">Edit</a>
+                                    </small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold text-dark mb-3">Meeting Style</label>
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="meetingStyle" id="online" 
+                                               {% if profile and profile.meeting_style == 'Online' %}checked{% elif not profile %}checked{% endif %} disabled>
+                                        <label class="btn btn-outline-dark" for="online">
+                                            <i class="bi bi-laptop me-2"></i>Online
+                                        </label>
+                                        <input type="radio" class="btn-check" name="meetingStyle" id="inPerson"
+                                               {% if profile and profile.meeting_style == 'In-Person' %}checked{% endif %} disabled>
+                                        <label class="btn btn-outline-dark" for="inPerson">
+                                            <i class="bi bi-geo-alt-fill me-2"></i>In-Person
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block mt-2">
+                                        Current: <strong>{{ profile.meeting_style if profile else 'Online' }}</strong> 
+                                        <a href="{{ url_for('profile_edit') }}" class="text-decoration-none">Edit</a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Accessibility Options -->
+                    <div class="profile-section-card card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                                <div class="d-flex align-items-center mb-4">
+                                <div class="profile-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                    <i class="bi bi-accessibility fs-3"></i>
+                                </div>
+                                <h3 class="fw-bold font-oswald mb-0 text-dark">MAKE IT COMFORTABLE</h3>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="largeText" 
+                                                   style="width: 3rem; height: 1.5rem;"
+                                                   {% if profile and profile.large_text %}checked{% endif %}
+                                                   onchange="updateAccessibility('large_text', this.checked)">
+                                            <label class="form-check-label fw-semibold text-dark ms-3" for="largeText">
+                                                <i class="bi bi-textarea-resize me-2"></i>Large Text
+                                            </label>
+                                        </div>
+                                        <p class="text-muted small mb-0 mt-2">Increases font sizes for easier reading</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="highContrast" 
+                                                   style="width: 3rem; height: 1.5rem;"
+                                                   {% if profile and profile.high_contrast %}checked{% endif %}
+                                                   onchange="updateAccessibility('high_contrast', this.checked)">
+                                            <label class="form-check-label fw-semibold text-dark ms-3" for="highContrast">
+                                                <i class="bi bi-circle-half me-2"></i>High Contrast
+                                            </label>
+                                        </div>
+                                        <p class="text-muted small mb-0 mt-2">Improves contrast without breaking theme</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="accessibility-toggle-card p-3 rounded-3 border">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="easyReading" 
+                                                   style="width: 3rem; height: 1.5rem;"
+                                                   {% if profile and profile.easy_reading %}checked{% endif %}
+                                                   onchange="updateAccessibility('easy_reading', this.checked)">
+                                            <label class="form-check-label fw-semibold text-dark ms-3" for="easyReading">
+                                                <i class="bi bi-justify-left me-2"></i>Easy Reading
+                                            </label>
+                                        </div>
+                                        <p class="text-muted small mb-0 mt-2">Increases spacing for clarity</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Recent Participation -->
+                    <div class="profile-section-card card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="profile-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-clock-history fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">YOUR ACTIVITY</h3>
+                                </div>
+                                <a href="{{ url_for('skills_exchange') }}" class="btn btn-sm btn-outline-dark rounded-pill">
+                                    VIEW ALL <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="activity-list">
+                                {% if recent_activities %}
+                                    {% for activity in recent_activities %}
+                                    <div class="activity-item d-flex align-items-start gap-3 p-3 rounded-3 border mb-3">
+                                        <div class="activity-icon rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-semibold text-dark mb-1">
+                                                <a href="{{ url_for('skill_detail', post_id=activity.id) }}" class="text-decoration-none text-dark">
+                                                    Created Skill Post: "{{ activity.title }}"
+                                                </a>
+                                            </h6>
+                                            <p class="text-muted small mb-0">
+                                                Skills Exchange • 
+                                                {% if activity.date_posted %}
+                                                    {% set days_ago = (datetime.utcnow() - activity.date_posted).days %}
+                                                    {% if days_ago == 0 %}Today
+                                                    {% elif days_ago == 1 %}1 day ago
+                                                    {% else %}{{ days_ago }} days ago
+                                                    {% endif %}
+                                                {% else %}
+                                                    Recently
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="text-center py-4">
+                                        <p class="text-muted mb-0">No recent activity yet. <a href="{{ url_for('create_skill') }}">Create your first post!</a></p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Interest Tags -->
+                    <div class="profile-section-card card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="profile-section-icon rounded-circle d-flex align-items-center justify-content-center me-3">
+                                        <i class="bi bi-tags-fill fs-3"></i>
+                                    </div>
+                                    <h3 class="fw-bold font-oswald mb-0 text-dark">COMMON GROUND</h3>
+                                </div>
+                                <button class="btn btn-sm btn-outline-dark rounded-pill" type="button">
+                                    <i class="bi bi-plus-lg me-1"></i>ADD INTEREST
+                                </button>
+                            </div>
+                            
+                            <div class="interest-tags-wrapper">
+                                {% if profile and profile.interest_tags %}
+                                    {% set tag_icons = {'Cooking': 'cup-hot', 'Walking': 'walking', 'Movies': 'film', 'Games': 'controller', 'Music': 'music-note-beamed', 'Reading': 'book', 'Technology': 'laptop', 'Crafts': 'scissors', 'Gardening': 'flower1', 'Photography': 'camera'} %}
+                                    {% for tag in profile.interest_tags.split(',') %}
+                                        {% set tag_clean = tag.strip() %}
+                                        {% set tag_icon = tag_icons.get(tag_clean, 'tag') %}
+                                        <span class="interest-tag badge px-4 py-2 rounded-pill me-2 mb-2">
+                                            <i class="bi bi-{{ tag_icon }} me-1"></i>{{ tag_clean }}
+                                        </span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="text-muted mb-0">No interests added yet. <a href="{{ url_for('profile_edit') }}">Add your interests</a> to find common ground!</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sidebar Column -->
+                <div class="col-lg-4">
+                    <div class="profile-sidebar-wrapper">
+                    
+                    <!-- Quick Actions Card -->
+                    <div class="profile-sidebar-card card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold font-oswald mb-4 text-dark">QUICK ACTIONS</h4>
+                            
+                            <div class="crud-actions-list">
+                                {% if not profile %}
+                                <a href="{{ url_for('profile_create') }}" class="crud-action-item d-flex align-items-center gap-3 p-3 rounded-3 border mb-3 text-decoration-none">
+                                    <div class="crud-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">Create Profile</div>
+                                        <div class="text-muted small">Set up your profile</div>
+                                    </div>
+                                </a>
+                                {% else %}
+                                <a href="{{ url_for('profile_edit') }}" class="crud-action-item d-flex align-items-center gap-3 p-3 rounded-3 border mb-3 text-decoration-none">
+                                    <div class="crud-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">Edit Profile</div>
+                                        <div class="text-muted small">Update your information</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="{{ url_for('skills_exchange') }}" class="crud-action-item d-flex align-items-center gap-3 p-3 rounded-3 border mb-3 text-decoration-none">
+                                    <div class="crud-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-list-ul"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">My Posts</div>
+                                        <div class="text-muted small">View your skill posts</div>
+                                    </div>
+                                </a>
+                                
+                                <a href="{{ url_for('create_skill') }}" class="crud-action-item d-flex align-items-center gap-3 p-3 rounded-3 border mb-3 text-decoration-none">
+                                    <div class="crud-icon rounded-circle d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark">New Post</div>
+                                        <div class="text-muted small">Create a skill post</div>
+                                    </div>
+                                </a>
+                                
+                                <form method="POST" action="{{ url_for('profile_delete') }}" class="mb-0" onsubmit="return confirm('Are you sure you want to deactivate your profile? This will hide your profile from others.');">
+                                    <button type="submit" class="crud-action-item d-flex align-items-center gap-3 p-3 rounded-3 border w-100 text-decoration-none border-0 bg-transparent text-start">
+                                        <div class="crud-icon rounded-circle d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-x-circle"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold text-dark">Deactivate Profile</div>
+                                            <div class="text-muted small">Hide your profile</div>
+                                        </div>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Benefits Card -->
+                    <div class="profile-sidebar-card card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold font-oswald mb-4 text-dark">WHY IT MATTERS</h4>
+                            
+                            <div class="benefits-list">
+                                <div class="benefit-item d-flex align-items-start gap-3 mb-4">
+                                    <div class="benefit-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-semibold text-dark mb-1">Builds Trust</h6>
+                                        <p class="text-muted small mb-0">Complete profiles help members feel confident connecting</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="benefit-item d-flex align-items-start gap-3 mb-4">
+                                    <div class="benefit-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                        <i class="bi bi-chat-heart"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-semibold text-dark mb-1">Conversation Starters</h6>
+                                        <p class="text-muted small mb-0">Shared interests make it easier to begin meaningful chats</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="benefit-item d-flex align-items-start gap-3">
+                                    <div class="benefit-icon bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0">
+                                        <i class="bi bi-accessibility"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-semibold text-dark mb-1">Accessibility Support</h6>
+                                        <p class="text-muted small mb-0">Customize your experience for comfort and clarity</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update accessibility settings via AJAX
+    function updateAccessibility(setting, value) {
+        const profilePage = document.querySelector('.profile-page-bg');
+        
+        // Apply visual changes immediately
+        if (setting === 'large_text') {
+            if (value) {
+                profilePage.classList.add('large-text-mode');
+            } else {
+                profilePage.classList.remove('large-text-mode');
+            }
+        } else if (setting === 'high_contrast') {
+            if (value) {
+                profilePage.classList.add('high-contrast-mode');
+            } else {
+                profilePage.classList.remove('high-contrast-mode');
+            }
+        } else if (setting === 'easy_reading') {
+            if (value) {
+                profilePage.classList.add('easy-reading-mode');
+            } else {
+                profilePage.classList.remove('easy-reading-mode');
+            }
+        }
+        
+        // Save to backend (if profile exists)
+        {% if profile %}
+        const formData = new FormData();
+        formData.append('update_accessibility', 'true');
+        formData.append('setting', setting);
+        formData.append('value', value ? 'true' : 'false');
+        
+        fetch('{{ url_for("profile_edit") }}', {
+            method: 'POST',
+            body: formData
+        }).catch(() => {
+            localStorage.setItem('profile_' + setting, value ? 'true' : 'false');
+        });
+        {% else %}
+        // Save locally if no profile
+        localStorage.setItem('profile_' + setting, value ? 'true' : 'false');
+        {% endif %}
+    }
+    
+    // Load saved accessibility preferences on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const profilePage = document.querySelector('.profile-page-bg');
+        {% if not profile %}
+        // Load from localStorage if no profile
+        if (localStorage.getItem('profile_large_text') === 'true') {
+            document.getElementById('largeText').checked = true;
+            profilePage.classList.add('large-text-mode');
+        }
+        if (localStorage.getItem('profile_high_contrast') === 'true') {
+            document.getElementById('highContrast').checked = true;
+            profilePage.classList.add('high-contrast-mode');
+        }
+        if (localStorage.getItem('profile_easy_reading') === 'true') {
+            document.getElementById('easyReading').checked = true;
+            profilePage.classList.add('easy-reading-mode');
+        }
+        {% endif %}
+    });
+
+    // Share profile function
+    function shareProfile() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'My Bridge Profile',
+                text: 'Check out my profile on InterGen Connect!',
+                url: window.location.href
+            }).catch(() => {});
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(window.location.href);
+            alert('Profile link copied to clipboard!');
+        }
+    }
+
+    // Respect reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.style.setProperty('--transition-speed', '0.01s');
+    }
+</script>
+{% endblock %}

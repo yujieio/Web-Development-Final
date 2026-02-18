@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-4 py-lg-5 bingo-page">
+        <div class="container-xxl">
+
+            <!-- Hero Header -->
+            <div class="leaderboard-hero mb-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="leaderboard-title mb-2">
+                            <span class="leaderboard-title-main">Community</span>
+                            <span class="leaderboard-title-accent">Leaderboard</span>
+                        </h1>
+                        <p class="leaderboard-description mb-0">
+                            See who's leading the way in storytelling, engagement, and community participation. 
+                            Earn points by posting stories, commenting, and sharing.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        {% if current_user and current_profile %}
+                        <a href="{{ url_for('bingo_shop') }}" class="btn btn-warning mb-3 d-inline-block">
+                            <i class="bi bi-shop me-2"></i>Point Shop ({{ current_profile.total_points or 0 }} pts)
+                        </a>
+                        {% endif %}
+                        {% if current_user_rank %}
+                        <div class="leaderboard-your-rank">
+                            <div class="your-rank-label">Your Rank</div>
+                            <div class="your-rank-number">#{{ current_user_rank }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- How to Earn Points - Clearly Stated -->
+            <div class="leaderboard-points-bar mb-4">
+                <h4 class="font-oswald text-dark mb-3 text-center">How to Earn Points</h4>
+                <div class="row g-3 text-center">
+                    <div class="col-6 col-md">
+                        <div class="points-info-card">
+                            <div class="points-info-icon"><i class="bi bi-pencil-square"></i></div>
+                            <div class="points-info-label">Post a Bingo Story</div>
+                            <div class="points-info-value">+10 pts</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="points-info-card">
+                            <div class="points-info-icon"><i class="bi bi-chat-heart"></i></div>
+                            <div class="points-info-label">Comment on Story</div>
+                            <div class="points-info-value">+2 pts</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="points-info-card">
+                            <div class="points-info-icon"><i class="bi bi-share"></i></div>
+                            <div class="points-info-label">Share Bingo Story</div>
+                            <div class="points-info-value">+5 pts</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="points-info-card">
+                            <div class="points-info-icon"><i class="bi bi-arrow-repeat"></i></div>
+                            <div class="points-info-label">Create Skill Post</div>
+                            <div class="points-info-value">+10 pts</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="points-info-card">
+                            <div class="points-info-icon"><i class="bi bi-heart-fill"></i></div>
+                            <div class="points-info-label">Help Someone</div>
+                            <div class="points-info-value">+15 pts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if leaderboard %}
+            <!-- Top 3 Podium -->
+            {% if leaderboard|length >= 3 %}
+            <div class="leaderboard-podium mb-5">
+                <div class="row justify-content-center align-items-end g-3">
+                    <!-- 2nd Place -->
+                    <div class="col-md-3 text-center">
+                        <div class="podium-card podium-silver">
+                            <div class="podium-medal"><i class="bi bi-award-fill"></i></div>
+                            <div class="podium-rank">#2</div>
+                            <div class="podium-avatar podium-avatar-img">
+                                <img src="{{ leaderboard[1].avatar_url }}" alt="{{ leaderboard[1].name }}">
+                            </div>
+                            <div class="podium-name"><span class="name-style-{{ leaderboard[1].name_style|default('default') }}">{{ leaderboard[1].name }}</span></div>
+                            <div class="podium-type">{{ leaderboard[1].user_type }}</div>
+                            <div class="podium-stats">
+                                <span><i class="bi bi-book"></i> {{ leaderboard[1].story_count }}</span>
+                                <span><i class="bi bi-chat"></i> {{ leaderboard[1].comment_count }}</span>
+                                <span><i class="bi bi-hand-thumbs-up"></i> {{ leaderboard[1].skills_offered }}</span>
+                                <span><i class="bi bi-heart"></i> {{ leaderboard[1].helps_given }}</span>
+                            </div>
+                            <div class="podium-points">{{ leaderboard[1].total_points }} pts</div>
+                        </div>
+                    </div>
+                    <!-- 1st Place -->
+                    <div class="col-md-3 text-center">
+                        <div class="podium-card podium-gold">
+                            <div class="podium-medal"><i class="bi bi-trophy-fill"></i></div>
+                            <div class="podium-rank">#1</div>
+                            <div class="podium-avatar podium-avatar-gold podium-avatar-img">
+                                <img src="{{ leaderboard[0].avatar_url }}" alt="{{ leaderboard[0].name }}">
+                            </div>
+                            <div class="podium-name"><span class="name-style-{{ leaderboard[0].name_style|default('default') }}">{{ leaderboard[0].name }}</span></div>
+                            <div class="podium-type">{{ leaderboard[0].user_type }}</div>
+                            <div class="podium-stats">
+                                <span><i class="bi bi-book"></i> {{ leaderboard[0].story_count }}</span>
+                                <span><i class="bi bi-chat"></i> {{ leaderboard[0].comment_count }}</span>
+                                <span><i class="bi bi-hand-thumbs-up"></i> {{ leaderboard[0].skills_offered }}</span>
+                                <span><i class="bi bi-heart"></i> {{ leaderboard[0].helps_given }}</span>
+                            </div>
+                            <div class="podium-points">{{ leaderboard[0].total_points }} pts</div>
+                        </div>
+                    </div>
+                    <!-- 3rd Place -->
+                    <div class="col-md-3 text-center">
+                        <div class="podium-card podium-bronze">
+                            <div class="podium-medal"><i class="bi bi-award-fill"></i></div>
+                            <div class="podium-rank">#3</div>
+                            <div class="podium-avatar podium-avatar-img">
+                                <img src="{{ leaderboard[2].avatar_url }}" alt="{{ leaderboard[2].name }}">
+                            </div>
+                            <div class="podium-name"><span class="name-style-{{ leaderboard[2].name_style|default('default') }}">{{ leaderboard[2].name }}</span></div>
+                            <div class="podium-type">{{ leaderboard[2].user_type }}</div>
+                            <div class="podium-stats">
+                                <span><i class="bi bi-book"></i> {{ leaderboard[2].story_count }}</span>
+                                <span><i class="bi bi-chat"></i> {{ leaderboard[2].comment_count }}</span>
+                                <span><i class="bi bi-hand-thumbs-up"></i> {{ leaderboard[2].skills_offered }}</span>
+                                <span><i class="bi bi-heart"></i> {{ leaderboard[2].helps_given }}</span>
+                            </div>
+                            <div class="podium-points">{{ leaderboard[2].total_points }} pts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Full Leaderboard Table -->
+            <div class="card border-0 shadow-sm leaderboard-table-card">
+                <div class="card-body p-4 p-lg-5">
+                    <h3 class="font-oswald text-dark mb-4">Full Rankings</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover leaderboard-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-dark">Rank</th>
+                                    <th class="text-dark">Member</th>
+                                    <th class="text-dark">Type</th>
+                                    <th class="text-dark text-center"><i class="bi bi-book me-1"></i>Stories</th>
+                                    <th class="text-dark text-center"><i class="bi bi-chat me-1"></i>Comments</th>
+                                    <th class="text-dark text-center"><i class="bi bi-hand-thumbs-up me-1"></i>Offered</th>
+                                    <th class="text-dark text-center"><i class="bi bi-heart me-1"></i>Helped</th>
+                                    <th class="text-dark text-end">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in leaderboard %}
+                                <tr class="{% if current_user and entry.user_id == current_user.id %}leaderboard-current-user{% endif %}">
+                                    <td>
+                                        {% if entry.rank == 1 %}
+                                            <span class="rank-badge rank-gold"><i class="bi bi-trophy-fill"></i></span>
+                                        {% elif entry.rank == 2 %}
+                                            <span class="rank-badge rank-silver"><i class="bi bi-award-fill"></i></span>
+                                        {% elif entry.rank == 3 %}
+                                            <span class="rank-badge rank-bronze"><i class="bi bi-award-fill"></i></span>
+                                        {% else %}
+                                            <span class="rank-number">{{ entry.rank }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="leaderboard-avatar leaderboard-avatar-img">
+                                                <img src="{{ entry.avatar_url }}" alt="{{ entry.name }}">
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold text-dark"><span class="name-style-{{ entry.name_style|default('default') }}">{{ entry.name }}</span></div>
+                                                {% if current_user and entry.user_id == current_user.id %}
+                                                    <small class="text-muted">(You)</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if entry.user_type == 'Youth' %}leaderboard-badge-youth{% else %}leaderboard-badge-senior{% endif %}">
+                                            {{ entry.user_type }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-dark">{{ entry.story_count }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-dark">{{ entry.comment_count }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-dark">{{ entry.skills_offered }}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-dark">{{ entry.helps_given }}</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <span class="leaderboard-points fw-bold">{{ entry.total_points }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-3"><i class="bi bi-trophy text-muted" style="font-size: 3rem;"></i></div>
+                    <h4 class="font-oswald text-dark mb-2">No Rankings Yet</h4>
+                    <p class="text-muted mb-4">Be the first to earn points! Post stories, comment, and share.</p>
+                    <a href="{{ url_for('bingo_storytelling') }}" class="btn btn-dark">
+                        <i class="bi bi-play-circle me-2"></i>Start Storytelling
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

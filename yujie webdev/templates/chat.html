@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/help_style.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<div class="chat-page-wrapper">
+  <div class="chat-back-row chat-back-fixed" aria-label="Navigation">
+    <div class="d-flex gap-2 align-items-center">
+      <a href="{{ url_for('conversations') }}" class="chat-back-link">← Back to Conversation Topics</a>
+      <span class="text-muted">|</span>
+      <a href="{{ url_for('talk') }}" class="chat-back-link">Back to Talk & Connect</a>
+    </div>
+  </div>
+
+  <div class="chat-page-container chat-layout-column">
+    <div class="chat-page-header">
+      <div class="chat-topic-row">
+        {% if topic_title %}
+        <h1 class="chat-topic-title" id="header-topic-title">{{ topic_title }}</h1>
+        {% endif %}
+      </div>
+      {% if partner %}
+      <div class="chat-partner-section" id="partner-click" aria-label="View profile">
+        <div class="letter-avatar" id="header-avatar" aria-hidden="true">{{ partner.name[0]|upper if partner.name else '' }}</div>
+        <span class="chat-partner-name" id="header-partner-name">{{ partner.name or '' }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="chat-main-panel chat-layout-body">
+      <div class="chat-messages chat-messages-scroll" id="chat-messages">
+        {% if real_chat and partner_id %}
+        {# Messages loaded via JS for real-time chat #}
+        {% else %}
+        <div class="msg-row received">
+          <div class="msg-bubble">
+            {{ opening_message }}
+            <div class="msg-time">10:32 AM</div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="suggested-section">
+        <div class="suggested-label">Suggested talking points</div>
+        <div class="suggested-chips">
+          {% for point in suggested_points %}
+          <button type="button" class="suggested-chip" data-text="{{ point }}">{{ point }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="message-input" placeholder="Type a message..." autocomplete="off" style="background-color: #ffffff !important; color: #212529 !important;">
+        <button type="button" class="btn-send" id="btn-send">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Partner profile modal -->
+  <div class="modal-overlay" id="modal-partner-profile" aria-hidden="true">
+    <div class="modal-dialog-custom">
+        <button type="button" class="modal-close-btn" aria-label="Close" data-close="modal-partner-profile">&times;</button>
+        <div class="modal-profile-header">
+            {% if partner %}
+            <div class="letter-avatar" id="modal-avatar" aria-hidden="true">{{ partner.name[0]|upper if partner.name else '' }}</div>
+            <div>
+                <h2 class="modal-profile-name" id="modal-name">{{ partner.name or '' }}</h2>
+                {% if topic_title %}<p class="modal-profile-topic" id="modal-current-topic">{{ topic_title }}</p>{% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <div class="modal-section-label">Bio</div>
+        {% if partner %}{% if partner.bio is defined %}<p class="modal-bio" id="modal-bio">{{ partner.bio }}</p>{% endif %}{% endif %}
+        <a href="{{ url_for('chat') }}?topic=random" class="btn-start-another">Start Another Chat</a>
+    </div>
+  </div>
+</div><!-- /.chat-page-wrapper -->
+
+<script>
+(function() {
+    var messagesEl = document.getElementById('chat-messages');
+    var inputEl = document.getElementById('message-input');
+    var btnSend = document.getElementById('btn-send');
+    var realChat = {{ 'true' if real_chat and partner_id else 'false' }};
+    var partnerId = {{ partner_id|default('null')|tojson }};
+    var myUserId = {{ my_user_id|default('null')|tojson }};
+    var helpRequestId = {{ help_request_id|default('null')|tojson }};
+    var skillPostId = {{ skill_post_id|default('null')|tojson }};
+    var openingMessage = {{ opening_message|tojson }};
+
+    function nowTime(d) {
+        d = d || new Date();
+        var h = d.getHours(), m = d.getMinutes();
+        var am = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        m = (m < 10) ? '0' + m : m;
+        return h + ':' + m + ' ' + am;
+    }
+
+    function formatTime(isoStr) {
+        if (!isoStr) return nowTime();
+        try {
+            var d = new Date(isoStr);
+            return nowTime(d);
+        } catch (e) { return nowTime(); }
+    }
+
+    function escapeHtml(s) {
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+    }
+
+    function addMessage(text, isSent, timeStr) {
+        var row = document.createElement('div');
+        row.className = 'msg-row ' + (isSent ? 'sent' : 'received');
+        row.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '<div class="msg-time">' + (timeStr || nowTime()) + '</div></div>';
+        messagesEl.appendChild(row);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function sendMessage(text) {
+        if (!text || !text.trim()) return;
+        var txt = text.trim();
+        if (realChat && partnerId && typeof io !== 'undefined') {
+            if (window.socket && window.socket.connected) {
+                var payload = { partner_id: partnerId, message: txt };
+                if (helpRequestId) payload.help_request_id = helpRequestId;
+                if (skillPostId) payload.skill_post_id = skillPostId;
+                window.socket.emit('send_message', payload);
+                addMessage(txt, true, nowTime());
+                inputEl.value = '';
+            } else {
+                var sendPayload = { partner_id: partnerId, message: txt };
+                if (helpRequestId) sendPayload.help_request_id = helpRequestId;
+                if (skillPostId) sendPayload.skill_post_id = skillPostId;
+                fetch('{{ url_for("api_chat_send") }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify(sendPayload)
+                }, { credentials: 'same-origin' }).then(function(r) { return r.json(); }).then(function(data) {
+                    if (data.ok) {
+                        addMessage(txt, true, data.created_at ? formatTime(data.created_at) : nowTime());
+                        inputEl.value = '';
+                    }
+                });
+            }
+        } else {
+            addMessage(txt, true);
+            inputEl.value = '';
+        }
+    }
+
+    if (realChat && partnerId) {
+        var msgUrl = '{{ url_for("api_chat_messages") }}?partner_id=' + partnerId;
+        if (helpRequestId) msgUrl += '&help_request_id=' + helpRequestId;
+        if (skillPostId) msgUrl += '&skill_post_id=' + skillPostId;
+        fetch(msgUrl, { credentials: 'same-origin' })
+            .then(function(r) {
+                if (!r.ok) return [];
+                return r.json().catch(function() { return []; });
+            })
+            .then(function(msgs) {
+                if (!Array.isArray(msgs)) msgs = [];
+                messagesEl.innerHTML = '';
+                if (msgs.length === 0 && openingMessage) {
+                    addMessage(openingMessage, false, '10:32 AM');
+                } else {
+                    msgs.forEach(function(m) {
+                        addMessage(m.message, m.is_sent, m.created_at ? formatTime(m.created_at) : null);
+                    });
+                }
+            })
+            .catch(function() {
+                messagesEl.innerHTML = '';
+                if (openingMessage) addMessage(openingMessage, false, '10:32 AM');
+            });
+
+        if (typeof io !== 'undefined') {
+            window.socket = io({ path: '/socket.io', transports: ['websocket', 'polling'] });
+            window.socket.on('connect', function() {
+                var joinPayload = { partner_id: partnerId };
+                if (helpRequestId) joinPayload.help_request_id = helpRequestId;
+                if (skillPostId) joinPayload.skill_post_id = skillPostId;
+                window.socket.emit('join_chat', joinPayload);
+            });
+            window.socket.on('new_message', function(data) {
+                if (data.sender_id === myUserId) return;
+                addMessage(data.message, false, data.created_at ? formatTime(data.created_at) : null);
+            });
+            window.socket.on('disconnect', function() {
+                var leavePayload = { partner_id: partnerId };
+                if (helpRequestId) leavePayload.help_request_id = helpRequestId;
+                if (skillPostId) leavePayload.skill_post_id = skillPostId;
+                window.socket.emit('leave_chat', leavePayload);
+            });
+        }
+    }
+
+    document.querySelectorAll('.suggested-chip').forEach(function(chip) {
+        chip.addEventListener('click', function() {
+            var text = this.getAttribute('data-text');
+            if (text) sendMessage(text);
+        });
+    });
+
+    btnSend.addEventListener('click', function() { sendMessage(inputEl.value); });
+
+    inputEl.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage(inputEl.value);
+        }
+    });
+
+    var partnerClick = document.getElementById('partner-click');
+    if (partnerClick) {
+        partnerClick.addEventListener('click', function() {
+            var modal = document.getElementById('modal-partner-profile');
+            if (modal) { modal.classList.add('active'); modal.setAttribute('aria-hidden', 'false'); }
+        });
+    }
+
+    document.querySelectorAll('[data-close]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = this.getAttribute('data-close');
+            var el = document.getElementById(id);
+            if (el) { el.classList.remove('active'); el.setAttribute('aria-hidden', 'true'); }
+        });
+    });
+
+    document.getElementById('modal-partner-profile').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('active');
+            this.setAttribute('aria-hidden', 'true');
+        }
+    });
+})();
+</script>
+{% endblock %}

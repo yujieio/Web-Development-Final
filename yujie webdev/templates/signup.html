@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 col-md-9">
+
+                    <div class="auth-card card border-0 shadow-lg">
+                        <form method="POST" action="{{ url_for('signup') }}" enctype="multipart/form-data">
+                        <div class="auth-card-header text-center">
+                            <div class="auth-logo mb-3">
+                                <div class="auth-logo-icon">
+                                    <i class="bi bi-person-plus-fill"></i>
+                                </div>
+                            </div>
+                            <h1 class="font-oswald mb-1 text-white">JOIN MASTERCODERS</h1>
+                            <p class="text-white-50 mb-0">Create your account and start connecting across generations</p>
+                        </div>
+
+                        <div class="card-body p-4 p-lg-5">
+                                <!-- UPLOAD PROFILE PICTURE - FIRST in form -->
+                                <div class="p-4 rounded-3 mb-4" style="background: #fff9e6; border: 2px solid #ffc107;">
+                                    <label class="form-label fw-bold text-dark mb-2">
+                                        <i class="bi bi-camera-fill me-2"></i>Upload Profile Picture <span class="text-muted">(optional)</span>
+                                    </label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img id="signupProfilePreview" src="{{ url_for('static', filename='images/default-avatar.svg') }}" alt="Preview" class="rounded-circle border" style="width: 80px; height: 80px; object-fit: cover;">
+                                        <div class="flex-grow-1">
+                                            <input type="file" class="form-control" name="profile_picture" id="signupProfilePicture" accept=".jpg,.jpeg,.png,.gif,.webp">
+                                            <small class="text-muted">JPG, PNG, GIF or WebP. Max 5MB.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Account Details Section -->
+                                <div class="auth-section mb-4">
+                                    <h5 class="font-oswald text-dark mb-3">
+                                        <i class="bi bi-shield-lock me-2"></i>ACCOUNT DETAILS
+                                    </h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Username *</label>
+                                            <input type="text" class="form-control auth-input" name="username" 
+                                                   value="{{ username|default('') }}"
+                                                   placeholder="Choose a username" required minlength="3" maxlength="80"
+                                                   pattern="[a-zA-Z0-9_.]+">
+                                            <small class="text-muted">Letters, numbers, underscores, dots only</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Email *</label>
+                                            <input type="email" class="form-control auth-input" name="email" 
+                                                   value="{{ email|default('') }}"
+                                                   placeholder="your@email.com" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Password *</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control auth-input" name="password" 
+                                                       id="signupPassword"
+                                                       placeholder="Min 6 characters" required minlength="6">
+                                                <button class="btn btn-outline-dark" type="button" onclick="togglePassword('signupPassword', this)">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Confirm Password *</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control auth-input" name="confirm_password" 
+                                                       id="confirmPassword"
+                                                       placeholder="Re-enter password" required minlength="6">
+                                                <button class="btn btn-outline-dark" type="button" onclick="togglePassword('confirmPassword', this)">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <!-- Profile Details Section -->
+                                <div class="auth-section mb-4">
+                                    <h5 class="font-oswald text-dark mb-3">
+                                        <i class="bi bi-person-circle me-2"></i>PROFILE DETAILS
+                                    </h5>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Full Name *</label>
+                                            <input type="text" class="form-control auth-input" name="full_name" 
+                                                   value="{{ full_name|default('') }}"
+                                                   placeholder="Your full name" required minlength="2">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">I am a *</label>
+                                            <div class="d-flex gap-3 mt-2">
+                                                <div class="auth-type-option flex-fill">
+                                                    <input type="radio" class="btn-check" name="user_type" id="typeYouth" value="Youth" 
+                                                           {% if user_type|default('Youth') == 'Youth' %}checked{% endif %}>
+                                                    <label class="btn btn-outline-dark w-100 py-2" for="typeYouth">
+                                                        <i class="bi bi-mortarboard me-1"></i> Youth
+                                                    </label>
+                                                </div>
+                                                <div class="auth-type-option flex-fill">
+                                                    <input type="radio" class="btn-check" name="user_type" id="typeSenior" value="Senior"
+                                                           {% if user_type|default('') == 'Senior' %}checked{% endif %}>
+                                                    <label class="btn btn-outline-dark w-100 py-2" for="typeSenior">
+                                                        <i class="bi bi-heart me-1"></i> Senior
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold text-dark">Languages *</label>
+                                            <input type="text" class="form-control auth-input" name="languages" 
+                                                   value="{{ languages|default('') }}"
+                                                   placeholder="e.g., English, Mandarin, Malay (comma-separated)" required minlength="2">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold text-dark">Short Introduction *</label>
+                                            <textarea class="form-control auth-input" name="short_intro" rows="3" 
+                                                      placeholder="Tell others about yourself..." required minlength="10">{{ short_intro|default('') }}</textarea>
+                                            <small class="text-muted">At least 10 characters</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark btn-lg w-100 auth-submit-btn mb-4">
+                                    <i class="bi bi-person-plus me-2"></i>Create Account
+                                </button>
+
+                                <div class="text-center">
+                                    <p class="text-muted mb-0">
+                                        Already have an account? 
+                                        <a href="{{ url_for('login') }}" class="auth-link fw-semibold">Sign In</a>
+                                    </p>
+                                </div>
+                        </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('bi-eye', 'bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('bi-eye-slash', 'bi-eye');
+    }
+}
+
+// Profile picture preview
+var picInput = document.getElementById('signupProfilePicture');
+if (picInput) picInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('signupProfilePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Password match validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const pw = document.getElementById('signupPassword').value;
+    const cpw = document.getElementById('confirmPassword').value;
+    if (pw !== cpw) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+    }
+});
+</script>
+{% endblock %}

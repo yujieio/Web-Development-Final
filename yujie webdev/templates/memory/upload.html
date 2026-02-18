@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-4 py-lg-5">
+        <div class="container-xxl">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            
+                            <h2 class="text-dark mb-4 text-uppercase fw-bold text-center font-oswald">
+                                <i class="bi bi-camera-retro me-2"></i> Upload Memory
+                            </h2>
+
+                            <form method="POST" enctype="multipart/form-data">
+                                {% include '_profile_info_posting.html' %}
+
+                                <div class="mb-4">
+                                    <label class="form-label text-dark fw-bold text-uppercase ls-1">Title</label>
+                                    <input type="text" name="title" class="form-control form-control-lg" placeholder="e.g. Morning Tai Chi" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label text-dark fw-bold text-uppercase ls-1">Caption</label>
+                                    <textarea name="caption" class="form-control" rows="3" placeholder="What is happening in this photo?" required></textarea>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label text-dark fw-bold text-uppercase ls-1 mb-2">Photo</label>
+                                    {% set field_name='image' %}{% set preview_id='memoryPhotoPreview' %}{% set input_id='memoryPhotoInput' %}{% set required=true %}{% set label='Upload a new photo' %}
+                                    {% include '_photo_upload_field.html' %}
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-dark btn-lg py-3 shadow">PUBLISH MEMORY</button>
+                                    <a href="{{ url_for('memory_album') }}" class="btn btn-outline-secondary">Cancel</a>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById('memoryPhotoInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(ev) { document.getElementById('memoryPhotoPreview').src = ev.target.result; };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

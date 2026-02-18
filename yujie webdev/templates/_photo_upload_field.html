@@ -1,0 +1,14 @@
+{# Shared photo upload field - same format as profile/signup #}
+{# Required: field_name, preview_id, input_id. Optional: required, current_src, label #}
+<div class="d-flex align-items-center gap-3">
+    <div class="flex-shrink-0">
+        <img id="{{ preview_id }}" src="{{ current_src or url_for('static', filename='images/photo-placeholder.svg') }}" 
+             alt="Preview" class="rounded border" style="width: 100px; height: 100px; object-fit: cover;">
+    </div>
+    <div class="flex-grow-1">
+        <label class="form-label fw-semibold text-dark">{{ label|default('Upload photo') }}</label>
+        <input type="file" class="form-control" name="{{ field_name }}" id="{{ input_id }}"
+               accept=".jpg,.jpeg,.png,.gif,.webp" {{ 'required' if required|default(true) else '' }}>
+        <small class="text-muted">JPG, PNG, GIF or WebP. Max 5MB.</small>
+    </div>
+</div>

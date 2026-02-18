@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<div class="shop-page">
+    <div class="shop-hero">
+        <div class="shop-hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="shop-hero-content text-center py-5">
+                <span class="shop-badge">PREMIUM STYLES</span>
+                <h1 class="shop-title mb-3">Point System Shop</h1>
+                <p class="shop-subtitle mb-4">Customize your display name with exclusive fonts and colors. Stand out across the entire platform.</p>
+                <div class="shop-points-pill">
+                    <i class="bi bi-gem"></i>
+                    <span>{{ points }}</span> points
+                </div>
+                <div class="shop-preview-badge mt-3">
+                    <span class="name-style-{{ profile.name_style or 'default' }}">{{ profile.name if profile else 'You' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <!-- Default style (free) -->
+        <div class="shop-section mb-5">
+            <h3 class="shop-section-title"><i class="bi bi-palette me-2"></i>Default</h3>
+            <div class="shop-card shop-card-default">
+                <div class="shop-card-inner">
+                    <div class="shop-card-preview">
+                        <span class="name-style-default">Standard Name</span>
+                    </div>
+                    <form method="POST" action="{{ url_for('bingo_shop_equip', item_key='default') }}" class="d-inline">
+                        <button type="submit" class="shop-btn shop-btn-outline {% if (profile.name_style or 'default') == 'default' %}shop-btn-active{% endif %}">
+                            {% if (profile.name_style or 'default') == 'default' %}<i class="bi bi-check-circle-fill me-2"></i>{% endif %}Equip
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium styles -->
+        <h3 class="shop-section-title mb-4"><i class="bi bi-stars me-2"></i>Premium Styles</h3>
+        <div class="row g-4">
+            {% for item in items %}
+            <div class="col-md-6 col-lg-4">
+                <div class="shop-card {% if item.key in owned %}shop-card-owned{% endif %}">
+                    <div class="shop-card-glow name-style-{{ item.key }}"></div>
+                    <div class="shop-card-inner">
+                        <div class="shop-card-icon">
+                            <i class="bi {{ item.icon }}"></i>
+                        </div>
+                        <h4 class="shop-card-title">{{ item.name }}</h4>
+                        <p class="shop-card-desc">{{ item.description }}</p>
+                        <div class="shop-card-preview">
+                            <span class="name-style-{{ item.key }}">{{ profile.name if profile else 'Preview' }}</span>
+                        </div>
+                        <div class="shop-card-price">
+                            <i class="bi bi-gem"></i> {{ item.price }} pts
+                        </div>
+                        <div class="shop-card-actions">
+                            {% if item.key in owned %}
+                                {% if (profile.name_style or 'default') == item.key %}
+                                <span class="shop-badge-equipped"><i class="bi bi-check-circle-fill me-1"></i>Equipped</span>
+                                {% else %}
+                                <form method="POST" action="{{ url_for('bingo_shop_equip', item_key=item.key) }}" class="d-inline">
+                                    <button type="submit" class="shop-btn shop-btn-primary">Equip</button>
+                                </form>
+                                {% endif %}
+                            {% else %}
+                                <form method="POST" action="{{ url_for('bingo_shop_purchase', item_key=item.key) }}" class="d-inline">
+                                    <button type="submit" class="shop-btn shop-btn-purchase" {% if points < item.price %}disabled{% endif %}>
+                                        Purchase
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5 pt-5">
+            <a href="{{ url_for('bingo_storytelling') }}" class="shop-btn shop-btn-outline-dark">
+                <i class="bi bi-arrow-left me-2"></i>Back to Bingo
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

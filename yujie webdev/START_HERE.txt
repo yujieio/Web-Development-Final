@@ -1,0 +1,7 @@
+QUICK START
+
+1. Install dependencies: pip install -r requirements.txt
+2. Run: python app.py  (or double-click RUN_APP.bat)
+3. Visit: http://127.0.0.1:5000
+
+For deployment, see DEPLOY.md

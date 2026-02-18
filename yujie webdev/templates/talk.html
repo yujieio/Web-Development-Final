@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="talk-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h1 class="display-3 fw-bold font-oswald mb-3 text-dark">TALK & CONNECT</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Engage in meaningful conversations, fun activities, and storytelling</p>
+            </div>
+
+            <!-- Carousel Slider -->
+            <div id="talkCarousel" class="carousel slide talk-carousel" data-bs-ride="carousel" data-bs-interval="6000" data-bs-pause="hover">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#talkCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Conversation"></button>
+                    <button type="button" data-bs-target="#talkCarousel" data-bs-slide-to="1" aria-label="Bingo Storytelling"></button>
+                </div>
+
+                <div class="carousel-inner">
+                    <!-- Conversation Slide -->
+                    <div class="carousel-item active">
+                        <div class="talk-slide-content">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-6">
+                                    <div class="talk-slide-icon-wrapper bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4">
+                                        <i class="bi bi-chat-dots-fill fs-1"></i>
+                                    </div>
+                                    <h2 class="display-4 fw-bold font-oswald mb-4 text-dark">CONVERSATION</h2>
+                                    <p class="lead text-dark mb-4" style="opacity: 0.8; line-height: 1.8;">
+                                        Start meaningful conversations with seniors and youth. Share experiences, 
+                                        ask questions, and build connections through open dialogue. Our conversation 
+                                        platform makes it easy to connect and communicate across generations.
+                                    </p>
+                                    <ul class="list-unstyled mb-4">
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                                            <strong>Real-time messaging</strong> - Chat instantly with community members
+                                        </li>
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                                            <strong>Topic-based discussions</strong> - Join conversations on topics you care about
+                                        </li>
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                                            <strong>Safe environment</strong> - Moderated conversations for respectful dialogue
+                                        </li>
+                                    </ul>
+                                    <a href="{{ url_for('conversations') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                                        <i class="bi bi-chat-left-text me-2"></i>START CONVERSATION
+                                    </a>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="talk-slide-image-wrapper">
+                                        <img src="{{ url_for('static', filename='css/Conversation Talk.jpg') }}" 
+                                             alt="Conversation - Seniors using smartphones" 
+                                             class="talk-slide-image rounded-4 shadow-lg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bingo Slide -->
+                    <div class="carousel-item">
+                        <div class="talk-slide-content">
+                            <div class="row align-items-center g-4">
+                                <div class="col-lg-6">
+                                    <div class="talk-slide-icon-wrapper bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-4">
+                                        <i class="bi bi-grid-3x3-gap-fill fs-1"></i>
+                                    </div>
+                                    <h2 class="display-4 fw-bold font-oswald mb-4 text-dark">BINGO STORYTELLING</h2>
+                                    <p class="lead text-dark mb-4" style="opacity: 0.8; line-height: 1.8;">
+                                        Bring seniors and youth together with Singaporean-style Bingo storytelling. 
+                                        Local-themed prompts make it easy to share stories, laugh together, and create 
+                                        real connections across generations.
+                                    </p>
+                                    <ul class="list-unstyled mb-4">
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <strong>Interactive games</strong> - Play Bingo with community members
+                                        </li>
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <strong>Conversation starters</strong> - Each square prompts meaningful discussions
+                                        </li>
+                                        <li class="mb-3 text-dark">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <strong>Easy to join</strong> - Drop in anytime and start playing
+                                        </li>
+                                    </ul>
+                                    <a href="{{ url_for('bingo_storytelling') }}" class="btn btn-success btn-lg rounded-pill px-5 py-3">
+                                        <i class="bi bi-trophy me-2"></i>PLAY BINGO
+                                    </a>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="talk-slide-image-wrapper">
+                                        <img src="{{ url_for('static', filename='css/Bingo Talk.jpg') }}" 
+                                             alt="Bingo Storytelling - Seniors and youth playing bingo together" 
+                                             class="talk-slide-image talk-bingo-image rounded-4 shadow-lg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Carousel Controls -->
+                <button class="carousel-control-prev talk-carousel-control" type="button" data-bs-target="#talkCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next talk-carousel-control" type="button" data-bs-target="#talkCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Slow down carousel transitions
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.querySelector('#talkCarousel');
+        if (carousel) {
+            // Set custom transition duration - much slower
+            carousel.addEventListener('slide.bs.carousel', function() {
+                const carouselInner = carousel.querySelector('.carousel-inner');
+                if (carouselInner) {
+                    carouselInner.style.transition = 'transform 3s ease-in-out';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-4 py-lg-5">
+        <div class="container-xxl">
+            
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mb-4">
+                <h1 class="display-4 fw-bold font-oswald mb-0" style="color: #1a222d !important;">
+                    <i class="bi bi-images me-2"></i>Memory Album
+                </h1>
+                {% if current_user %}
+                <a href="{{ url_for('memory_upload') }}" class="btn btn-dark btn-lg shadow">
+                    <i class="bi bi-cloud-arrow-up me-2"></i>Upload Memory
+                </a>
+                {% endif %}
+            </div>
+
+            {% if memories %}
+            <div class="row g-4">
+                {% for memory in memories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm memory-album-card overflow-hidden">
+                        <div class="memory-album-image-wrapper" style="height: 250px; overflow: hidden;">
+                            <img src="{{ url_for('static', filename='uploads/memories/' + memory.image_filename) }}" class="card-img-top h-100 w-100" style="object-fit: cover;" alt="{{ memory.title }}">
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h4 class="card-title fw-bold text-dark mb-2">{{ memory.title }}</h4>
+                            <p class="card-text text-muted mb-4 flex-grow-1" style="line-height: 1.6;">
+                                {{ memory.caption or '' }}
+                            </p>
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                                <small class="text-muted fw-semibold">
+                                    <i class="bi bi-person me-1"></i>Posted by <span class="name-style-{{ get_name_style(memory.user_id) if memory.user_id else 'default' }}">{{ memory.uploader or 'Anonymous' }}</span>
+                                </small>
+                                {% if current_user and memory.user_id == current_user.id %}
+                                <a href="{{ url_for('memory_delete', id=memory.id) }}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this memory?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-images" style="font-size: 4rem; color: #198754; opacity: 0.3;"></i>
+                </div>
+                <h3 class="font-oswald mb-3 text-dark">No memories shared yet</h3>
+                <h4 class="text-muted mb-4">Upload the first one!</h4>
+                {% if current_user %}
+                <a href="{{ url_for('memory_upload') }}" class="btn btn-dark btn-lg">
+                    <i class="bi bi-cloud-arrow-up me-2"></i>Upload Memory
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<style>
+.memory-album-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.memory-album-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+}
+.memory-album-image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+</style>
+{% endblock %}

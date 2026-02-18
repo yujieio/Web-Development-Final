@@ -1,0 +1,890 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .page-header {
+        background: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .create-btn {
+        background-color: #212529;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.2s;
+    }
+
+    .create-btn:hover {
+        background-color: #000;
+        color: white;
+    }
+
+    .search-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        background-color: #ffffff !important;
+        color: #212529 !important;
+    }
+    .search-input::placeholder {
+        color: #6c757d !important;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #212529;
+        box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.1);
+    }
+
+    .filters-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .filter-label {
+        font-weight: 500;
+        color: #495057;
+        margin-right: 0.5rem;
+    }
+
+    .filter-pill {
+        padding: 0.5rem 1rem;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 2rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        color: #495057;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .filter-pill:hover {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+        color: #212529;
+        text-decoration: none;
+    }
+
+    .filter-pill.active {
+        background-color: #212529;
+        color: white;
+        border-color: #212529;
+    }
+
+    .divider {
+        width: 1px;
+        height: 24px;
+        background-color: #dee2e6;
+    }
+
+    .urgency-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+    }
+
+    .urgency-dot.urgent {
+        background-color: #dc3545;
+    }
+
+    .urgency-dot.normal {
+        background-color: #6c757d;
+    }
+
+    .request-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: box-shadow 0.2s;
+    }
+
+    .request-card:hover {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .card-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #212529;
+        margin: 0;
+        flex: 1;
+    }
+
+    .urgency-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .urgency-badge.urgent {
+        background-color: #fee;
+        color: #dc3545;
+    }
+
+    .urgency-badge.normal {
+        background-color: #f8f9fa;
+        color: #6c757d;
+    }
+
+    .resolved-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        white-space: nowrap;
+        background-color: #e9ecef;
+        color: #6c757d;
+        margin-left: 0.5rem;
+    }
+
+    .request-resolved-text {
+        padding: 0.6rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #6c757d;
+        cursor: default;
+    }
+
+    .card-description {
+        color: #212529;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    .card-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .info-pill {
+        padding: 0.4rem 0.8rem;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 1rem;
+        font-size: 0.9rem;
+        color: #212529;
+        font-weight: 500;
+    }
+
+    .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #212529;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-name {
+        font-weight: 500;
+        color: #212529;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-time {
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-outline {
+        padding: 0.6rem 1.25rem;
+        border: 1px solid #212529;
+        background: white;
+        color: #212529;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-outline:hover {
+        background-color: #212529;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-dark {
+        padding: 0.6rem 1.25rem;
+        background-color: #212529;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-dark:hover {
+        background-color: #000;
+        color: white;
+        text-decoration: none;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+    }
+
+    .page-btn {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #dee2e6;
+        background: white;
+        color: #495057;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        margin: 0 0.15rem;
+        font-size: 1rem;
+        min-width: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .page-btn:hover:not(:disabled) {
+        background-color: #f8f9fa;
+        border-color: #adb5bd;
+        text-decoration: none;
+        color: #212529;
+    }
+
+    .page-btn.active {
+        background-color: #000;
+        color: white;
+        border-color: #000;
+    }
+
+    .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .page-btn .bi {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .page-btn.active .bi {
+        color: white;
+    }
+
+    .page-ellipsis {
+        padding: 0.5rem 0.25rem;
+        color: #6c757d;
+        user-select: none;
+    }
+
+    .request-count {
+        margin-bottom: 1rem;
+        color: #495057;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1rem 0;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6c757d;
+        padding: 0.25rem 0.5rem;
+        line-height: 1;
+    }
+
+    .modal-close:hover {
+        color: #212529;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #212529;
+        margin-bottom: 1rem;
+        padding-right: 2rem;
+    }
+
+    .modal-description {
+        color: #495057;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* Offer success modal (reuses modal-overlay / modal-content pattern) */
+    .success-modal-content {
+        text-align: center;
+    }
+    .success-icon-wrap {
+        margin-bottom: 1rem;
+    }
+    .success-icon-wrap .success-icon {
+        font-size: 3rem;
+        color: #198754;
+    }
+    .success-modal-content .modal-title {
+        padding-right: 0;
+    }
+    .success-modal-btn {
+        margin-top: 0.5rem;
+    }
+</style>
+{% set requests = help_requests if help_requests is defined else [] %}
+{% set include_resolved = request.args.get('include_resolved') == '1' %}
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="page-title">Help Requests</h1>
+                <p class="page-subtitle">Browse requests from seniors in your community</p>
+            </div>
+            <a href="{{ url_for('create_help') }}" class="create-btn">
+                <i class="bi bi-plus-circle"></i> Create Help Request
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="search-section">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search help requests...">
+        
+        <div class="filters-row">
+            <span class="filter-label">Filters:</span>
+            
+            <a href="#" class="filter-pill active" data-filter="category" data-value="">All Categories</a>
+            <a href="#" class="filter-pill" data-filter="category" data-value="Technology">Technology</a>
+            <a href="#" class="filter-pill" data-filter="category" data-value="Transportation">Transportation</a>
+            <a href="#" class="filter-pill" data-filter="category" data-value="Shopping">Shopping</a>
+            <a href="#" class="filter-pill" data-filter="category" data-value="Home Tasks">Home Tasks</a>
+            
+            <div class="divider"></div>
+            
+            <a href="#" class="filter-pill active" data-filter="mode" data-value="Online">Online</a>
+            <a href="#" class="filter-pill active" data-filter="mode" data-value="Meetup">Meetup</a>
+            
+            <div class="divider"></div>
+            
+            <a href="#" class="filter-pill active" data-filter="urgency" data-value="Urgent">
+                <span class="urgency-dot urgent"></span>Urgent
+            </a>
+            <a href="#" class="filter-pill active" data-filter="urgency" data-value="Normal">
+                <span class="urgency-dot normal"></span>Normal
+            </a>
+        </div>
+    </div>
+
+    <div id="request-count" class="request-count"></div>
+
+    <div id="requestsContainer">
+        {% for req in requests %}
+        {% if (req.status or '') != 'Resolved' %}
+        <div class="request-card"
+             data-category="{{ req.category }}"
+             data-mode="{{ 'Meetup' if req.preferred_help_method == 'Meetup' else 'Online' }}"
+             data-urgency="{{ req.urgency }}"
+             data-title="{{ req.title|lower }}"
+             data-description="{{ req.description|lower }}">
+            <div class="card-header-row">
+                <h3 class="card-title">{{ req.title }}</h3>
+                <span class="urgency-badge {{ (req.urgency or 'normal')|lower }}">{{ req.urgency or 'Normal' }}</span>
+            </div>
+            <p class="card-description">{{ req.description }}</p>
+            <div class="card-pills">
+                <span class="info-pill">{{ req.category }}</span>
+                <span class="info-pill">{% if req.preferred_help_method == 'Meetup' %}Meetup{% else %}Online{% endif %}</span>
+                <span class="info-pill">{{ req.time_needed }}</span>
+            </div>
+            <div class="profile-row">
+                <div class="avatar">{{ req.posted_by[0] }}</div>
+                <div class="profile-info">
+                    <div class="profile-name">{{ req.posted_by }}</div>
+                    <div class="profile-time">Posted {{ req.time_ago }}</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-outline view-details-btn" data-request-id="{{ req.id }}">View Details</button>
+                <a href="{{ url_for('help_detail', request_id=req.id) }}" class="btn-dark offer-help-btn" data-request-id="{{ req.id }}">
+                    <i class="bi bi-hand-index"></i> Offer Help
+                </a>
+            </div>
+        </div>
+        {% elif include_resolved %}
+        <div class="request-card" data-status="Resolved"
+             data-category="{{ req.category }}"
+             data-mode="{{ 'Meetup' if req.preferred_help_method == 'Meetup' else 'Online' }}"
+             data-urgency="{{ req.urgency }}"
+             data-title="{{ req.title|lower }}"
+             data-description="{{ req.description|lower }}">
+            <div class="card-header-row">
+                <h3 class="card-title">{{ req.title }} <span class="resolved-badge">Resolved</span></h3>
+                <span class="urgency-badge {{ (req.urgency or 'normal')|lower }}">{{ req.urgency or 'Normal' }}</span>
+            </div>
+            <p class="card-description">{{ req.description }}</p>
+            <div class="card-pills">
+                <span class="info-pill">{{ req.category }}</span>
+                <span class="info-pill">{% if req.preferred_help_method == 'Meetup' %}Meetup{% else %}Online{% endif %}</span>
+                <span class="info-pill">{{ req.time_needed }}</span>
+            </div>
+            <div class="profile-row">
+                <div class="avatar">{{ req.posted_by[0] }}</div>
+                <div class="profile-info">
+                    <div class="profile-name">{{ req.posted_by }}</div>
+                    <div class="profile-time">Posted {{ req.time_ago }}</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-outline view-details-btn" data-request-id="{{ req.id }}">View Details</button>
+                <span class="request-resolved-text">Request resolved</span>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <div id="pagination" class="pagination"></div>
+</div>
+
+<!-- Create Success Modal (?success=1) -->
+<div class="modal-overlay" id="createSuccessModal">
+    <div class="modal-content success-modal-content">
+        <div class="success-icon-wrap"><i class="bi bi-check-circle-fill success-icon"></i></div>
+        <h2 class="modal-title">Help request created successfully</h2>
+        <p class="modal-description">Your help request has been posted and is visible to the community.</p>
+        <button type="button" class="btn-dark success-modal-btn" id="createSuccessBackBtn">Back to Help Requests</button>
+    </div>
+</div>
+
+<!-- Offer Success Modal (?offer_sent=1) -->
+<div class="modal-overlay" id="offerSuccessModal">
+    <div class="modal-content success-modal-content">
+        <div class="success-icon-wrap"><i class="bi bi-check-circle-fill success-icon"></i></div>
+        <h2 class="modal-title">Offer sent successfully</h2>
+        <p class="modal-description">The requester has been notified of your offer.</p>
+        <button type="button" class="btn-dark success-modal-btn" id="offerSuccessBackBtn">Back to Help Requests</button>
+    </div>
+</div>
+
+<!-- View Details Modal -->
+<div class="modal-overlay" id="detailsModal">
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <span class="urgency-badge" id="modalUrgency"></span>
+        <p class="modal-description" id="modalDescription"></p>
+        <div class="modal-pills" id="modalPills"></div>
+        <div class="modal-profile">
+            <div class="avatar" id="modalAvatar"></div>
+            <div>
+                <div class="profile-name" id="modalName"></div>
+                <div class="profile-time" id="modalTime"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="application/json" id="requests-data">{{ requests | tojson }}</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function getHelpDetailUrl(requestId) {
+        return '/help/' + String(requestId);
+    }
+
+    const allRequests = JSON.parse(document.getElementById('requests-data').textContent || '[]');
+    let currentPage = 1;
+    const pageSize = 10;
+
+    const filterState = {
+        category: '',
+        mode: [],
+        urgency: [],
+        search: ''
+    };
+
+    function cardMatchesFilter(card) {
+        if (filterState.category && (card.dataset.category || '') !== filterState.category) return false;
+        const mode = (card.dataset.mode || '').trim() || 'Online';
+        if (filterState.mode.length > 0 && !filterState.mode.includes(mode)) return false;
+        if (filterState.urgency.length > 0 && !filterState.urgency.includes(card.dataset.urgency || '')) return false;
+        if (filterState.search) {
+            const q = filterState.search.toLowerCase();
+            const t = (card.dataset.title || '').includes(q);
+            const d = (card.dataset.description || '').includes(q);
+            if (!t && !d) return false;
+        }
+        return true;
+    }
+
+    function getVisibleCards() {
+        const container = document.getElementById('requestsContainer');
+        if (!container) return [];
+        const allCards = Array.from(container.querySelectorAll('.request-card'));
+        return allCards.filter(cardMatchesFilter);
+    }
+
+    function renderPage() {
+        const cards = getVisibleCards();
+        const totalItems = cards.length;
+        const totalPages = Math.ceil(totalItems / pageSize) || 1;
+        currentPage = Math.max(1, Math.min(currentPage, totalPages));
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+
+        const container = document.getElementById('requestsContainer');
+        const allCards = container ? Array.from(container.querySelectorAll('.request-card')) : [];
+        allCards.forEach(function(card) { card.classList.add('hidden'); });
+        for (var i = start; i < end && i < totalItems; i++) {
+            cards[i].classList.remove('hidden');
+        }
+
+        var countEl = document.getElementById('request-count');
+        if (countEl) {
+            countEl.textContent = totalItems === 0 ? 'No help requests match your filters.' : 'Showing ' + (start + 1) + '\u2013' + Math.min(end, totalItems) + ' of ' + totalItems + ' help requests';
+        }
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        var cards = getVisibleCards();
+        var totalItems = cards.length;
+        var totalPages = Math.ceil(totalItems / pageSize) || 1;
+        var container = document.getElementById('pagination');
+        if (!container) return;
+        if (totalItems === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        var html = '';
+        html += '<button type="button" class="page-btn" id="prevBtn"' + (currentPage === 1 ? ' disabled' : '') + '>Previous</button>';
+        var lastWasEllipsis = false;
+        for (var p = 1; p <= totalPages; p++) {
+            if (p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)) {
+                html += '<button type="button" class="page-btn' + (p === currentPage ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
+                lastWasEllipsis = false;
+            } else if (!lastWasEllipsis) {
+                html += '<span class="page-ellipsis">...</span>';
+                lastWasEllipsis = true;
+            }
+        }
+        html += '<button type="button" class="page-btn" id="nextBtn"' + (currentPage === totalPages ? ' disabled' : '') + '>Next</button>';
+        container.innerHTML = html;
+
+        document.getElementById('prevBtn') && document.getElementById('prevBtn').addEventListener('click', function() {
+            if (currentPage > 1) { currentPage--; renderPage(); }
+        });
+        document.getElementById('nextBtn') && document.getElementById('nextBtn').addEventListener('click', function() {
+            if (currentPage < totalPages) { currentPage++; renderPage(); }
+        });
+        container.querySelectorAll('[data-page]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                currentPage = parseInt(btn.dataset.page, 10);
+                renderPage();
+            });
+        });
+    }
+
+    document.querySelectorAll('.filter-pill').forEach(function(pill) {
+        pill.addEventListener('click', function(e) {
+            e.preventDefault();
+            var filterType = this.dataset.filter;
+            var value = this.dataset.value;
+
+            if (filterType === 'category') {
+                document.querySelectorAll('[data-filter="' + filterType + '"]').forEach(function(p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                filterState.category = value;
+            } else if (filterType === 'mode') {
+                this.classList.toggle('active');
+                if (this.classList.contains('active')) {
+                    if (filterState.mode.indexOf(value) === -1) filterState.mode.push(value);
+                } else {
+                    filterState.mode = filterState.mode.filter(function(v) { return v !== value; });
+                }
+            } else if (filterType === 'urgency') {
+                this.classList.toggle('active');
+                if (this.classList.contains('active')) {
+                    if (filterState.urgency.indexOf(value) === -1) filterState.urgency.push(value);
+                } else {
+                    filterState.urgency = filterState.urgency.filter(function(v) { return v !== value; });
+                }
+            }
+            currentPage = 1;
+            renderPage();
+        });
+    });
+
+    var searchEl = document.getElementById('searchInput');
+    if (searchEl) {
+        searchEl.addEventListener('input', function(e) {
+            filterState.search = e.target.value.toLowerCase();
+            currentPage = 1;
+            renderPage();
+        });
+    }
+
+    var requestsContainer = document.getElementById('requestsContainer');
+    if (requestsContainer) {
+        requestsContainer.addEventListener('click', function(e) {
+            const viewBtn = e.target.closest('.view-details-btn');
+            if (viewBtn) {
+                const id = parseInt(viewBtn.dataset.requestId, 10);
+                const req = allRequests.find(function(r) { return r.id === id; });
+                if (req) showModal(req);
+            }
+        });
+    }
+
+    function showModal(req) {
+        const modal = document.getElementById('detailsModal');
+        const urgencyClass = (req.urgency || '').toLowerCase();
+        const firstLetter = req.posted_by ? req.posted_by[0] : '?';
+
+        document.getElementById('modalTitle').textContent = req.title;
+        document.getElementById('modalUrgency').textContent = req.urgency || '';
+        document.getElementById('modalUrgency').className = 'urgency-badge ' + urgencyClass;
+        document.getElementById('modalDescription').textContent = req.description || '';
+        document.getElementById('modalAvatar').textContent = firstLetter;
+        document.getElementById('modalName').textContent = req.posted_by || 'Community Member';
+        document.getElementById('modalTime').textContent = 'Posted ' + (req.time_ago || 'recently');
+
+        const modeLabel = (req.preferred_help_method === 'Meetup') ? 'Meetup' : 'Online';
+        const pillsContainer = document.getElementById('modalPills');
+        pillsContainer.innerHTML = '<span class="info-pill">' + escapeHtml(req.category || '') + '</span>' +
+            '<span class="info-pill">' + escapeHtml(modeLabel) + '</span>' +
+            '<span class="info-pill">' + escapeHtml(req.time_needed || '') + '</span>';
+        modal.classList.add('active');
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : text;
+        return div.innerHTML;
+    }
+
+    var modalClose = document.getElementById('modalClose');
+    if (modalClose) {
+        modalClose.addEventListener('click', function() {
+            document.getElementById('detailsModal').classList.remove('active');
+        });
+    }
+
+    var detailsModal = document.getElementById('detailsModal');
+    if (detailsModal) {
+        detailsModal.addEventListener('click', function(e) {
+            if (e.target.id === 'detailsModal') {
+                detailsModal.classList.remove('active');
+            }
+        });
+    }
+
+    filterState.mode = ['Online', 'Meetup'];
+    filterState.urgency = ['Urgent', 'Normal'];
+
+    renderPage();
+
+    // Success modals: ?success=1 (create) and ?offer_sent=1 (offer sent)
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('success') === '1') {
+        var createModal = document.getElementById('createSuccessModal');
+        if (createModal) createModal.classList.add('active');
+    }
+    if (params.get('offer_sent') === '1') {
+        var offerModal = document.getElementById('offerSuccessModal');
+        if (offerModal) offerModal.classList.add('active');
+    }
+
+    function closeCreateSuccessAndCleanUrl() {
+        var m = document.getElementById('createSuccessModal');
+        if (m) m.classList.remove('active');
+        var u = new URL(window.location.href);
+        u.searchParams.delete('success');
+        window.history.replaceState({}, '', u.pathname + (u.search || '') + (u.hash || ''));
+    }
+    function closeOfferSuccessAndCleanUrl() {
+        var m = document.getElementById('offerSuccessModal');
+        if (m) m.classList.remove('active');
+        var u = new URL(window.location.href);
+        u.searchParams.delete('offer_sent');
+        window.history.replaceState({}, '', u.pathname + (u.search || '') + (u.hash || ''));
+    }
+
+    var createSuccessBackBtn = document.getElementById('createSuccessBackBtn');
+    if (createSuccessBackBtn) {
+        createSuccessBackBtn.addEventListener('click', closeCreateSuccessAndCleanUrl);
+    }
+    var createSuccessModal = document.getElementById('createSuccessModal');
+    if (createSuccessModal) {
+        createSuccessModal.addEventListener('click', function(e) {
+            if (e.target.id === 'createSuccessModal') closeCreateSuccessAndCleanUrl();
+        });
+    }
+
+    var offerSuccessBackBtn = document.getElementById('offerSuccessBackBtn');
+    if (offerSuccessBackBtn) {
+        offerSuccessBackBtn.addEventListener('click', closeOfferSuccessAndCleanUrl);
+    }
+    var offerSuccessModal = document.getElementById('offerSuccessModal');
+    if (offerSuccessModal) {
+        offerSuccessModal.addEventListener('click', function(e) {
+            if (e.target.id === 'offerSuccessModal') closeOfferSuccessAndCleanUrl();
+        });
+    }
+});
+</script>
+
+{% endblock %}

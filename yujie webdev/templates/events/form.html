@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .event-form-page-bg {
+        background: #f5f6f8;
+        min-height: 100vh;
+    }
+    .event-form-page {
+        color: #1a222d;
+        font-family: 'Roboto', sans-serif;
+    }
+    .event-form-page h1, .event-form-page h2, .event-form-page h3 {
+        font-family: 'Oswald', sans-serif;
+        color: #1a222d;
+    }
+    .form-control, .form-select {
+        background-color: #ffffff !important;
+        color: #1a222d !important;
+        border: 1px solid #ced4da;
+        font-family: 'Roboto', sans-serif;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: #ffffff !important;
+        color: #1a222d !important;
+        border-color: #1a222d;
+        box-shadow: 0 0 0 0.2rem rgba(26, 34, 45, 0.25);
+    }
+    .form-control::placeholder {
+        color: #6c757d !important;
+    }
+    .event-form-card {
+        background-color: #ffffff !important;
+    }
+    .event-form-page .form-label {
+        color: #1a222d !important;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+    }
+</style>
+<div class="event-form-page-bg">
+    <div class="container-fluid py-4 py-lg-5 event-form-page">
+        <div class="container-xxl">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card border-0 shadow-lg event-form-card">
+                        <div class="card-body p-5">
+                            
+                            <h2 class="mb-4 fw-bold" style="color: #1a222d !important; font-family: 'Oswald', sans-serif;">
+                                <i class="fa-solid fa-calendar-plus me-2"></i> {{ 'Edit' if event else 'Create New' }} Event
+                            </h2>
+                            {% include '_profile_info_posting.html' %}
+
+                            <form method="POST">
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Event Title</label>
+                                    <input type="text" name="title" class="form-control form-control-lg" placeholder="e.g. Community Gathering" value="{{ event.title if event }}" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Description</label>
+                                    <textarea name="description" class="form-control" rows="4" placeholder="Describe your event..." required>{{ event.description if event }}</textarea>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold" style="color: #1a222d !important;">Date</label>
+                                        <input type="date" name="date" class="form-control" value="{{ event.date if event }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold" style="color: #1a222d !important;">Time</label>
+                                        <input type="time" name="time" class="form-control" value="{{ event.time if event }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold" style="color: #1a222d !important;">Location</label>
+                                    <input type="text" name="location" class="form-control" placeholder="e.g. Community Hall or 'Online'" value="{{ event.location if event }}" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold" style="color: #1a222d !important;">Capacity (Pax)</label>
+                                        <input type="number" name="capacity" class="form-control" value="{{ event.capacity if event }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold" style="color: #1a222d !important;">Event Type</label>
+                                        <select name="event_type" class="form-select">
+                                            <option value="Physical" {{ 'selected' if event and event.event_type=='Physical' }}>Physical</option>
+                                            <option value="Online" {{ 'selected' if event and event.event_type=='Online' }}>Online</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-dark btn-lg w-100 mt-3 py-3 shadow">
+                                    {{ 'Save Changes' if event else 'Create Event' }}
+                                </button>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

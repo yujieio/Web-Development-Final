@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bingo-page-bg">
+    <div class="container-fluid py-4 py-lg-5 bingo-page">
+        <div class="container-xxl">
+            
+            <div class="mb-4">
+                <h1 class="mb-2 font-oswald" style="color: #1a222d !important;">Bingo Story Board</h1>
+                <p class="text-muted mb-0">Select a prompt to start writing your story. Complete prompts to fill your bingo board!</p>
+            </div>
+
+            <div class="row g-4">
+                <!-- Bingo Board -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                                <h3 class="font-oswald mb-0 text-dark">Story Prompts</h3>
+                                <div class="d-flex gap-2">
+                                    {% if current_user and current_profile %}
+                                    <a href="{{ url_for('bingo_shop') }}" class="btn btn-warning">
+                                        <i class="bi bi-shop me-2"></i>Point Shop ({{ current_profile.total_points or 0 }} pts)
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('bingo_create_story') }}" class="btn btn-dark">
+                                        <i class="bi bi-plus-lg me-2"></i>New Story
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- 5x5 Bingo Grid -->
+                            <div class="bingo-grid">
+                                {% for prompt in prompts %}
+                                    {% set is_completed = prompt.id in completed_prompt_ids %}
+                                    <div class="bingo-cell {% if is_completed %}bingo-cell-completed{% endif %}" 
+                                         data-prompt-id="{{ prompt.id }}">
+                                        <div class="bingo-cell-content">
+                                            {% if is_completed %}
+                                                <i class="bi bi-check-circle-fill text-dark mb-2" style="font-size: 1.5rem;"></i>
+                                            {% endif %}
+                                            <div class="bingo-cell-text">{{ prompt.prompt_text }}</div>
+                                        </div>
+                                        {% if not is_completed %}
+                                        <a href="{{ url_for('bingo_create_story', prompt_id=prompt.id) }}" 
+                                           class="bingo-cell-action btn btn-sm btn-outline-dark mt-2">
+                                            Write Story
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Progress Indicator -->
+                            <div class="mt-4 p-3 bg-light rounded-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-dark fw-semibold">Progress:</span>
+                                    <span class="text-dark fw-bold">
+                                        {{ completed_prompt_ids|length }} / {{ prompts|length }} Completed
+                                    </span>
+                                </div>
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar bg-dark" 
+                                         role="progressbar" 
+                                         style="width: {{ (completed_prompt_ids|length / prompts|length * 100) if prompts|length > 0 else 0 }}%"
+                                         aria-valuenow="{{ completed_prompt_ids|length }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="{{ prompts|length }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Stories Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body p-4">
+                            <h4 class="font-oswald mb-4 text-dark">Recent Stories</h4>
+                            {% if recent_stories %}
+                                <div class="bingo-recent-stories">
+                                    {% for story in recent_stories %}
+                                    <div class="bingo-story-preview mb-3 pb-3 border-bottom">
+                                        <h6 class="fw-semibold text-dark mb-1">
+                                            <a href="{{ url_for('bingo_story_detail', story_id=story.id) }}" 
+                                               class="text-decoration-none text-dark">
+                                                {{ story.title }}
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-2" style="opacity: 0.7;">
+                                            {{ story.story_content[:100] }}...
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted small">Posted by <span class="name-style-{{ get_name_style(story.user_id) if story.user_id else 'default' }}">{{ story.author_name }}</span></span>
+                                            <span class="badge bg-dark bg-opacity-10 text-dark">
+                                                <i class="bi bi-star me-1"></i>{{ story.points_earned }} pts
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <a href="{{ url_for('bingo_stories') }}" class="btn btn-outline-dark w-100 mt-3">
+                                    View All Stories
+                                </a>
+                            {% else %}
+                                <p class="text-muted text-center py-4">No stories yet. Be the first to share!</p>
+                                <a href="{{ url_for('bingo_create_story') }}" class="btn btn-dark w-100">
+                                    Create First Story
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Points Widget -->
+                    <div class="card border-0 shadow-sm bg-light">
+                        <div class="card-body p-4 text-center">
+                            <div class="bingo-widget-icon bg-dark bg-opacity-10 text-dark rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                <i class="bi bi-trophy fs-2"></i>
+                            </div>
+                            <h5 class="font-oswald mb-2 text-dark">Earn Points</h5>
+                            <ul class="list-unstyled text-start small">
+                                <li class="mb-2 text-dark">
+                                    <i class="bi bi-check-circle text-dark me-2"></i>
+                                    Post a story: <strong>10 points</strong>
+                                </li>
+                                <li class="mb-2 text-dark">
+                                    <i class="bi bi-check-circle text-dark me-2"></i>
+                                    Comment: <strong>2 points</strong>
+                                </li>
+                                <li class="text-dark">
+                                    <i class="bi bi-check-circle text-dark me-2"></i>
+                                    Share story: <strong>5 points</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

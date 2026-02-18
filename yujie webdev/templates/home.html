@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section-modern text-white position-relative overflow-hidden">
+    <div class="hero-overlay"></div>
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-center min-vh-75 py-5">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="hero-content">
+                    <h1 class="display-2 fw-bold mb-4 font-oswald hero-title">
+                        BRIDGING GENERATIONS<br>
+                        <span class="text-warning">SHARING WISDOM</span>
+                    </h1>
+                    <p class="lead mb-4 hero-subtitle" style="font-size: 1.25rem; line-height: 1.8;">
+                        A digital bridge connecting Youth and Seniors through shared stories, skills, and meaningful conversation. 
+                        Building lasting connections that enrich both generations.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="{{ url_for('profile') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold rounded-pill hero-btn">
+                            <i class="bi bi-people-fill me-2"></i>JOIN COMMUNITY
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold rounded-pill">
+                            <i class="bi bi-info-circle me-2"></i>LEARN MORE
+                        </a>
+                    </div>
+                    <div class="d-flex gap-4 mt-5 hero-stats">
+                        <div>
+                            <div class="h3 fw-bold text-warning mb-1">500+</div>
+                            <div class="small text-light">Active Singaporeans</div>
+                        </div>
+                        <div>
+                            <div class="h3 fw-bold text-warning mb-1">1,200+</div>
+                            <div class="small text-light">Skills Shared</div>
+                        </div>
+                        <div>
+                            <div class="h3 fw-bold text-warning mb-1">50+</div>
+                            <div class="small text-light">Events Hosted</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image-wrapper">
+                    <img src="{{ url_for('static', filename='css/Senior and youth home.jpg') }}" 
+                         alt="Seniors and Youth connecting" 
+                         class="img-fluid rounded-4 shadow-lg hero-main-image">
+                    <div class="hero-image-decoration"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-white features-section">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold font-oswald mb-3 text-dark">OUR FEATURES</h2>
+            <p class="lead text-dark" style="opacity: 0.8;">Empowering intergenerational connections through innovative digital solutions</p>
+        </div>
+        
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="feature-card-modern h-100 border-0 shadow-sm overflow-hidden">
+                    <div class="feature-image-wrapper">
+                        <img src="{{ url_for('static', filename='css/Skills Exchange Home.jpg') }}" 
+                             class="w-100 feature-image" 
+                             alt="Skills Exchange">
+                        <div class="feature-overlay"></div>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon-wrapper bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                <i class="bi bi-arrow-repeat fs-4"></i>
+                            </div>
+                            <h3 class="card-title fw-bold font-oswald mb-0 text-dark">SKILLS EXCHANGE</h3>
+                        </div>
+                        <p class="card-text text-dark mb-4" style="line-height: 1.8; opacity: 0.7;">
+                            Youth teach technology, Seniors teach life crafts. Join a session today and discover 
+                            the power of mutual learning across generations.
+                        </p>
+                        <a href="{{ url_for('skills_exchange') }}" class="btn btn-dark rounded-pill px-4 py-2">
+                            VIEW BOARD <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="feature-card-modern h-100 border-0 shadow-sm overflow-hidden">
+                    <div class="feature-image-wrapper">
+                        <img src="{{ url_for('static', filename='css/Event Home Page.jpg') }}" 
+                             class="w-100 feature-image" 
+                             alt="Event Planning">
+                        <div class="feature-overlay"></div>
+                    </div>
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon-wrapper bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                                <i class="bi bi-calendar-event fs-4"></i>
+                            </div>
+                            <h3 class="card-title fw-bold font-oswald mb-0 text-dark">EVENT PLANNING</h3>
+                        </div>
+                        <p class="card-text text-dark mb-4" style="line-height: 1.8; opacity: 0.7;">
+                            Plan community events and sign up for upcoming sessions. Connect in person 
+                            and build lasting friendships through organized activities.
+                        </p>
+                        <a href="{{ url_for('events_list') }}" class="btn btn-outline-dark rounded-pill px-4 py-2">
+                            VIEW EVENTS <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="py-5 bg-light why-choose-section">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-4 fw-bold font-oswald mb-3 text-dark">WHY CHOOSE US</h2>
+            <p class="lead text-dark" style="opacity: 0.8;">Building meaningful connections that matter</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="why-icon-wrapper bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4">
+                        <i class="bi bi-heart-fill fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold font-oswald mb-3 text-dark">MEANINGFUL CONNECTIONS</h4>
+                    <p class="text-dark" style="opacity: 0.7;">
+                        Create lasting relationships between generations through shared experiences 
+                        and mutual understanding.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="why-icon-wrapper bg-success bg-opacity-10 text-success rounded-circle d-inline-flex align-items-center justify-content-center mb-4">
+                        <i class="bi bi-book-fill fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold font-oswald mb-3 text-dark">MUTUAL LEARNING</h4>
+                    <p class="text-dark" style="opacity: 0.7;">
+                        Exchange knowledge and skills. Youth learn life wisdom, Seniors learn 
+                        modern technology.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="text-center p-4">
+                    <div class="why-icon-wrapper bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex align-items-center justify-content-center mb-4">
+                        <i class="bi bi-people-fill fs-1"></i>
+                    </div>
+                    <h4 class="fw-bold font-oswald mb-3 text-dark">COMMUNITY BUILDING</h4>
+                    <p class="text-dark" style="opacity: 0.7;">
+                        Join a vibrant community dedicated to bridging generational gaps 
+                        and fostering understanding.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container py-5 text-center">
+        <h2 class="display-4 fw-bold font-oswald mb-4">READY TO START YOUR JOURNEY?</h2>
+        <p class="lead mb-4" style="opacity: 0.9;">
+            Join thousands of members already sharing knowledge, building friendships, 
+            and bridging generations through meaningful exchanges.
+        </p>
+        <a href="{{ url_for('profile') }}" class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+            GET STARTED TODAY <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}
