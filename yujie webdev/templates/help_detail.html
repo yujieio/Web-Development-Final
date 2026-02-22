@@ -166,6 +166,7 @@
       {% else %}
       <h2 class="form-section-title"><i class="bi bi-pencil-square"></i> Make an Offer</h2>
       <form method="POST" action="{{ url_for('submit_offer', id=help_request.id) }}" id="offerForm">
+        {% include '_profile_info_posting.html' %}
         <div class="form-group">
           <label class="form-label" for="offerText">How can you help?</label>
           <textarea name="offer_text" id="offerText" class="form-control" rows="5" maxlength="500" placeholder="Explain how you can help—what you can offer, relevant experience, and when you're free." required></textarea>

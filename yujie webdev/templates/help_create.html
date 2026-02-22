@@ -1,94 +1,138 @@
 {% extends "base.html" %}
 {% block content %}
 
-<style>
-    body { background-color: #f8f9fa; }
-    .create-form-wrapper { max-width: 640px; margin: 0 auto; }
-    .form-card {
-        background: white;
-        border: 1px solid #e9ecef;
-        border-radius: 0.75rem;
-        padding: 2rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .form-card h2 {
-        font-size: 1.75rem;
-        font-weight: 600;
-        color: #212529;
-        margin-bottom: 0.5rem;
-    }
-    .form-card .subtitle {
-        color: #6c757d;
-        font-size: 0.95rem;
-        margin-bottom: 1.5rem;
-    }
-    .form-group {
-        margin-bottom: 1.25rem;
-    }
-    .form-group label {
-        display: block;
-        font-weight: 500;
-        color: #495057;
-        margin-bottom: 0.4rem;
-        font-size: 0.95rem;
-    }
-    .form-card input[type="text"],
-    .form-card textarea,
-    .form-card select {
-        width: 100%;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid #dee2e6;
-        border-radius: 0.5rem;
-        font-size: 1rem;
-        background-color: #ffffff !important;
-        color: #212529 !important;
-    }
-    .form-card input::placeholder,
-    .form-card textarea::placeholder {
-        color: #6c757d !important;
-    }
-    .form-card input:focus,
-    .form-card textarea:focus,
-    .form-card select:focus {
-        outline: none;
-        border-color: #212529;
-        box-shadow: 0 0 0 3px rgba(33,37,41,0.1);
-    }
-    .form-card textarea { min-height: 120px; resize: vertical; }
-    .urgency-group { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
-    .urgency-option {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-    }
-    .urgency-option input { width: auto; margin: 0; }
-    .btn-primary-form {
-        background-color: #212529;
-        color: white;
-        border: none;
-        padding: 0.6rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    .btn-primary-form:hover { background-color: #000; color: white; }
-    .btn-secondary-form {
-        padding: 0.6rem 1.5rem;
-        border: 1px solid #dee2e6;
-        background: white;
-        color: #495057;
-        border-radius: 0.5rem;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-block;
-        transition: all 0.2s;
-    }
-    .btn-secondary-form:hover { background-color: #f8f9fa; border-color: #adb5bd; color: #212529; text-decoration: none; }
-    .form-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #e9ecef; }
+<div class="skills-page-bg">
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold font-oswald mb-3 text-dark">CREATE HELP REQUEST</h1>
+                <p class="lead text-dark" style="opacity: 0.8;">Describe what you need and how you'd like to be helped</p>
+            </div>
 
-    /* Success modal */
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <form method="POST">
+                                {% include '_profile_info_posting.html' %}
+
+                                <!-- Post Details Section -->
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-file-text fs-3"></i>
+                                        </div>
+                                        <h3 class="fw-bold font-oswald mb-0 text-dark">POST DETAILS</h3>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold text-dark" for="title">Title *</label>
+                                        <input class="form-control" id="title" name="title" type="text"
+                                               placeholder="Short title for your request" required minlength="3">
+                                        <small class="text-muted">Minimum 3 characters</small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-semibold text-dark" for="description">Description *</label>
+                                        <textarea class="form-control" id="description" name="description" rows="6"
+                                                  placeholder="Describe what you need in detail..."
+                                                  required></textarea>
+                                        <small class="text-muted">Provide details to help others understand your request</small>
+                                    </div>
+                                </div>
+
+                                <!-- Category & Preferences Section -->
+                                <div class="mb-4">
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                                            <i class="bi bi-tags fs-3"></i>
+                                        </div>
+                                        <h3 class="fw-bold font-oswald mb-0 text-dark">CATEGORY & PREFERENCES</h3>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark" for="category">Category *</label>
+                                            <select class="form-select" id="category" name="category" required>
+                                                <option value="Technology">Technology</option>
+                                                <option value="Transportation">Transportation</option>
+                                                <option value="Shopping">Shopping</option>
+                                                <option value="Home Tasks">Home Tasks</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark" for="preferred_help_method">Preferred Help Method *</label>
+                                            <select class="form-select" id="preferred_help_method" name="preferred_help_method">
+                                                <option value="Chat">Chat</option>
+                                                <option value="Call">Call</option>
+                                                <option value="Meetup">Meetup</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark" for="time_needed">Time Needed *</label>
+                                            <select class="form-select" id="time_needed" name="time_needed" required>
+                                                <option value="" selected disabled>Choose time needed…</option>
+                                                <option value="30 mins">30 mins</option>
+                                                <option value="45 mins">45 mins</option>
+                                                <option value="1 hour">1 hour</option>
+                                                <option value="1-2 hours">1-2 hours</option>
+                                                <option value="2-3 hours">2-3 hours</option>
+                                                <option value="More than 3 hours">More than 3 hours</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold text-dark">Urgency</label>
+                                            <div class="d-flex gap-3 align-items-center flex-wrap">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="urgency" id="urgency_normal" value="Normal" checked>
+                                                    <label class="form-check-label" for="urgency_normal">Normal</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="urgency" id="urgency_urgent" value="Urgent">
+                                                    <label class="form-check-label" for="urgency_urgent">Urgent</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                                    <a href="{{ url_for('help_requests') }}" class="btn btn-outline-dark rounded-pill px-4">
+                                        <i class="bi bi-arrow-left me-2"></i>Back to Help Requests
+                                    </a>
+                                    <button class="btn btn-dark btn-lg rounded-pill px-5" type="submit">
+                                        <i class="bi bi-check2-circle me-2"></i>SUBMIT HELP REQUEST
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success modal -->
+<div id="successModal" class="success-modal-overlay" role="dialog" aria-labelledby="successModalTitle" aria-modal="true">
+    <div class="success-modal-card" onclick="event.stopPropagation()">
+        <button type="button" class="success-modal-close" id="successModalClose" aria-label="Close">&times;</button>
+        <div class="success-modal-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+        </div>
+        <h3 id="successModalTitle">Help request created successfully</h3>
+        <p class="success-message">Your request has been posted and is now visible to the community.</p>
+        <div class="success-modal-actions">
+            <a href="#" id="btnCreateAnother" class="btn-create-another">Create another request</a>
+            <a href="{{ url_for('help_requests') }}" class="btn-back">Back to Help Requests</a>
+        </div>
+    </div>
+</div>
+
+<style>
     .success-modal-overlay {
         display: none;
         position: fixed;
@@ -191,96 +235,6 @@
     }
     .success-modal-actions .btn-back:hover { background-color: #f8f9fa; border-color: #adb5bd; color: #212529; text-decoration: none; }
 </style>
-
-<div class="create-form-wrapper">
-    <div class="form-card">
-        <h2>Create Help Request</h2>
-        <p class="subtitle">Describe what you need and how you'd like to be helped.</p>
-
-        {% include '_profile_info_posting.html' %}
-
-        <form method="POST">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" name="title" required placeholder="Short title for your request">
-            </div>
-
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="5" required placeholder="Describe what you need in detail"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" name="category">
-                    <option value="Technology">Technology</option>
-                    <option value="Transportation">Transportation</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Home Tasks">Home Tasks</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="preferred_help_method">Preferred Help Method</label>
-                <select id="preferred_help_method" name="preferred_help_method">
-                    <option value="Chat">Chat</option>
-                    <option value="Call">Call</option>
-                    <option value="Meetup">Meetup</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="time_needed">Time Needed</label>
-                <select id="time_needed" name="time_needed" required>
-                    <option value="">Select time needed...</option>
-                    <option value="30 mins">30 mins</option>
-                    <option value="45 mins">45 mins</option>
-                    <option value="1 hour">1 hour</option>
-                    <option value="1-2 hours">1-2 hours</option>
-                    <option value="2-3 hours">2-3 hours</option>
-                    <option value="More than 3 hours">More than 3 hours</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Urgency</label>
-                <div class="urgency-group">
-                    <label class="urgency-option">
-                        <input type="radio" name="urgency" value="Normal" checked>
-                        <span>Normal</span>
-                    </label>
-                    <label class="urgency-option">
-                        <input type="radio" name="urgency" value="Urgent">
-                        <span>Urgent</span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn-primary-form">Submit Help Request</button>
-                <a href="{{ url_for('help_requests') }}" class="btn-secondary-form">Back to Help Requests</a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Success modal -->
-<div id="successModal" class="success-modal-overlay" role="dialog" aria-labelledby="successModalTitle" aria-modal="true">
-    <div class="success-modal-card" onclick="event.stopPropagation()">
-        <button type="button" class="success-modal-close" id="successModalClose" aria-label="Close">&times;</button>
-        <div class="success-modal-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-            </svg>
-        </div>
-        <h3 id="successModalTitle">Help request created successfully</h3>
-        <p class="success-message">Your request has been posted and is now visible to the community.</p>
-        <div class="success-modal-actions">
-            <a href="#" id="btnCreateAnother" class="btn-create-another">Create another request</a>
-            <a href="{{ url_for('help_requests') }}" class="btn-back">Back to Help Requests</a>
-        </div>
-    </div>
-</div>
 
 <script>
 (function() {

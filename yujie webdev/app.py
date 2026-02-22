@@ -2074,6 +2074,8 @@ def help_detail(request_id):
             if o.get("id") == help_req_dict.get("accepted_offer_id"):
                 accepted_offer_user_id = o.get("user_id")
                 break
+
+    profile = get_logged_in_profile()
     
     return render_template(
         "help_detail.html",
@@ -2081,7 +2083,8 @@ def help_detail(request_id):
         offers=offers,
         is_request_owner=is_request_owner,
         accepted_offer_user_id=accepted_offer_user_id,
-        resolved=request.args.get("resolved")
+        resolved=request.args.get("resolved"),
+        profile=profile
     )
 
 @app.route('/help/<int:id>/offer', methods=["POST"])

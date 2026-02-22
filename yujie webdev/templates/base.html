@@ -61,7 +61,9 @@
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'help_requests' %}active{% endif %}" href="#" onclick="return false;">Help!</a>
+                        <a class="nav-link {% if request.endpoint == 'help_requests' %}active{% endif %}" href="{{ url_for('help_requests') }}">
+                            <i class="bi bi-hand-index me-1"></i>Help!
+                        </a>
                     </li>
                     
                     <li class="nav-item">
